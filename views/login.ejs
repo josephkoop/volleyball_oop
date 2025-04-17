@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <h1>BVA Login</h1>
+    </header>
+    <div class="container">
+        <% if (error) { %><p style="color:red;"><%= error %></p><% } %>
+        <% if (successMessage) { %><p style="color:green;"><%= successMessage %></p><% } %>
+        <form action="/login" method="post">
+            <input type="text" name="username" placeholder="Username" required /><br>
+            <input type="password" name="password" placeholder="Password" required /><br>
+            <label>
+                <input type="checkbox" name="rememberMe" /> Remember Me
+            </label><br>
+            <button type="submit">Login</button>
+        </form>
+        <div class="center-link">
+            <a href="/signup">Don't have an account? Sign up</a>
+        </div>
+    </div>
+</body>
+</html>

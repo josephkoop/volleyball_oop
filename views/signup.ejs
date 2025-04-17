@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <h1>BVA Signup</h1>
+    </header>
+    <div class="container">
+        <% if (error) { %><p style="color:red;"><%= error %></p><% } %>
+        <form action="/signup" method="post">
+            <input type="text" name="username" placeholder="Username" required /><br>
+            <input type="password" name="password" placeholder="Password" required /><br>
+            <button type="submit">Sign Up</button>
+        </form>
+        <div class="center-link">
+            <a href="/login">Already have an account? Login</a>
+        </div>
+    </div>
+</body>
+</html>
