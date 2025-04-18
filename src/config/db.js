@@ -46,6 +46,12 @@ const initializeDB = async () => {
     }
 };
 
+const query = (text, params) => {
+    return pool.query(text, params);
+};
+
+
 initializeDB();
 
-export default pool;
+exports.query = query;
+exports.default = pool;

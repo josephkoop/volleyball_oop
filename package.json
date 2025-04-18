@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/007Flower/VolleyBall#readme",
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "typescript": "^5.8.3"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

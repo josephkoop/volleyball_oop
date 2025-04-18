@@ -3,12 +3,14 @@ import session from "express-session";
 import path from "path";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
+import homeRoutes from "./routes/homeRoutes.js";
 import cookieParser from "cookie-parser";
 
 dotenv.config();
 
 const app = express();
 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(process.cwd(), "public")));
 app.use(cookieParser());
@@ -22,7 +24,8 @@ app.use(session({
 app.set("view engine", "ejs");
 app.set("views", path.join(process.cwd(), "views"));
 
-app.use("/", authRoutes);
+app.use("/auth", authRoutes);
+app.use("/home", homeRoutes);
 
 app.get("/dashboard", (req, res) => {
     if (!req.session.user) return res.redirect("/login");
