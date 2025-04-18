@@ -1,4 +1,3 @@
-// routes/authRoutes.js
 import express from "express";
 import {
     getLogin,
@@ -6,9 +5,10 @@ import {
     getSignup,
     postSignup,
     logout,
+    getDashboard,
     getUserManagement,
     postAddAdmin,
-    postDeleteAdmin
+    postDeleteUser
 } from "../controllers/authController.js";
 
 const router = express.Router();
@@ -19,8 +19,10 @@ router.get("/signup", getSignup);
 router.post("/signup", postSignup);
 router.get("/logout", logout);
 
-router.get("/usermanagement", getUserManagement);  // This is the route you're checking
-router.post("/usermanagement/add-admin", postAddAdmin);
-router.post("/usermanagement/delete-admin", postDeleteAdmin);
+router.get("/dashboard", getDashboard);
+
+router.get("/usermanagement", getUserManagement);  // User management route
+router.post("/usermanagement/add-admin", postAddAdmin);  // Add admin
+router.post("/usermanagement/delete-user", postDeleteUser);  // Delete user (admin or regular)
 
 export default router;

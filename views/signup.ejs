@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Signup</title>
     <link rel="stylesheet" href="/styles.css">
 </head>
@@ -8,13 +9,15 @@
     <header>
         <h1>BVA Signup</h1>
     </header>
-    <div class="container">
+    <div class="standard-container">
         <% if (error) { %><p style="color:red;"><%= error %></p><% } %>
+
         <form action="/signup" method="post">
-            <input type="text" name="username" placeholder="Username" required /><br>
-            <input type="password" name="password" placeholder="Password" required /><br>
+            <input type="text" name="username" placeholder="Username" required />
+            <input type="password" name="password" placeholder="Password" required />
             <button type="submit">Sign Up</button>
         </form>
+
         <div class="center-link">
             <a href="/login">Already have an account? Login</a>
         </div>

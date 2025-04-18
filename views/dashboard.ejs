@@ -6,8 +6,11 @@
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <div class="dashboard-container">
-        <h1>Welcome to the Dashboard</h1>
+    <header>
+        <h1>BVA Dashboard</h1>
+    </header>
+    <div class="standard-container">
+        <h2>Welcome to the Dashboard</h2>
         <p>Hello, <%= user.username %>! You are logged in as <%= user.role %>.</p>
 
         <% if (user.role === 'overall-admin') { %>

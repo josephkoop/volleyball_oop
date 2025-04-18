@@ -1,4 +1,3 @@
-// controllers/authController.js
 import bcrypt from "bcrypt";
 import pool from "../config/db.js";
 
@@ -88,14 +87,13 @@ export const getUserManagement = async (req, res) => {
     }
 
     try {
-        const result = await pool.query("SELECT id, username FROM users WHERE role = 'admin'");
-        const admins = result.rows;
+        const result = await pool.query("SELECT id, username, role FROM users WHERE role != 'overall-admin'");
+        const users = result.rows;
 
-        // Pass the admins list and any error message to the EJS view
-        res.render("usermanagement", { admins, error: req.query.error || null });
+        res.render("usermanagement", { users, error: req.query.error || null });
     } catch (error) {
         console.error(error);
-        res.render("usermanagement", { error: "Error fetching admins", admins: [] });
+        res.render("usermanagement", { error: "Error fetching users", users: [] });
     }
 };
 
@@ -118,19 +116,19 @@ export const postAddAdmin = async (req, res) => {
     }
 };
 
-// Delete an admin
-export const postDeleteAdmin = async (req, res) => {
-    const { adminId } = req.body;
+// Delete a user (admin or regular)
+export const postDeleteUser = async (req, res) => {
+    const { userId } = req.body;
 
     try {
-        if (req.session.user.role === 'overall-admin' && req.session.user.username === "Admin" && adminId === req.session.user.id) {
+        if (req.session.user.role === 'overall-admin' && req.session.user.username === "Admin" && userId === req.session.user.id) {
             return res.redirect("/usermanagement?error=You cannot delete the overall admin");
         }
 
-        await pool.query("DELETE FROM users WHERE id = $1 AND role = 'admin'", [adminId]);
+        await pool.query("DELETE FROM users WHERE id = $1", [userId]);
         res.redirect("/usermanagement");
     } catch (error) {
         console.error(error);
-        res.redirect("/usermanagement?error=Failed to delete admin");
+        res.redirect("/usermanagement?error=Failed to delete user");
     }
 };

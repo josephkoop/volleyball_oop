@@ -7,25 +7,109 @@ body {
     color: #333;
 }
 
-h1, h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-}
-
 /* === Header === */
 header {
     background-color: #4CAF50;
     color: white;
     text-align: center;
-    padding: 10px 0;
+    padding: 15px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* === Common Container === */
-.container,
-.dashboard-container,
-.usermanagement-container {
-    max-width: 800px;
+h1, h2, h3 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* === Reusable 600px Centered Container === */
+.standard-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* === Forms Inside Containers === */
+.standard-container form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+/* === Input Fields === */
+.standard-container input[type="text"],
+.standard-container input[type="password"] {
+    padding: 12px;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #fff;
+}
+
+/* === Buttons === */
+.standard-container button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.standard-container button:hover {
+    background-color: #45a049;
+}
+
+/* === Links (Sign Up/Log In) === */
+.center-link {
+    margin-top: 20px;
+}
+
+.center-link a {
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.center-link a:hover {
+    text-decoration: underline;
+}
+
+/* === Dashboard Container === */
+.dashboard-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.dashboard-container a {
+    color: #4CAF50;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.dashboard-container a:hover {
+    text-decoration: underline;
+}
+
+/* === Add Admin Section === */
+.add-admin-container {
+    max-width: 600px;
     margin: 40px auto;
     padding: 30px;
     background-color: #fff;
@@ -33,147 +117,108 @@ header {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* === Form Layout === */
-form {
+.add-admin form {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 15px;
 }
 
-/* === Input Fields === */
-input[type="text"],
-input[type="password"],
-input[type="email"],
-input[type="checkbox"] {
+.add-admin input[type="text"],
+.add-admin input[type="password"] {
     padding: 12px;
     width: 100%;
     box-sizing: border-box;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 6px;
+    font-size: 16px;
     background-color: #fff;
 }
 
-/* === Buttons === */
-button {
+.add-admin button {
     background-color: #4CAF50;
     color: white;
     padding: 12px;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
     font-size: 16px;
     transition: background-color 0.3s ease;
-    width: 100%;
 }
 
-button:hover {
+.add-admin button:hover {
     background-color: #45a049;
 }
 
-/* === Links === */
-a {
-    color: #4CAF50;
-    text-decoration: none;
-    display: inline-block;
+/* === Existing Users Section === */
+.existing-users-container {
+    margin: 40px auto;
+    width: 90%;
+    max-width: 1200px;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-a:hover {
-    text-decoration: underline;
-}
-
-.center-link {
-    text-align: center;
-    margin-top: 20px;
-}
-
-/* === Error Message === */
-p {
-    color: red;
-    text-align: center;
-}
-
-/* === Dashboard === */
-.dashboard-container {
-    text-align: center;
-}
-
-.dashboard-container a {
-    margin: 10px;
-    padding: 10px 20px;
-    border: 1px solid #4CAF50;
-    border-radius: 5px;
-    color: #4CAF50;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-.dashboard-container a:hover {
-    background-color: #4CAF50;
-    color: white;
-}
-
-/* === Admin/User Management === */
-.usermanagement-container {
+/* === Columns Layout for Users === */
+.existing-users-columns {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     gap: 30px;
+    flex-wrap: wrap;
 }
 
-.usermanagement-container h2 {
+.user-column {
+    flex: 1;
+    min-width: 300px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.user-column h3 {
     margin-top: 0;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 2px solid #ddd;
     padding-bottom: 10px;
 }
 
-/* Add Admin Section */
-.add-admin {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-}
-
-/* Existing Admins Section */
-.existing-admins {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-}
-
-/* Admin List */
-.existing-admins ul {
+/* === User Lists === */
+.user-column ul {
     list-style: none;
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 10px;
+    gap: 12px;
 }
 
-.existing-admins li {
+.user-column li {
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: center;
     background-color: #fff;
-    padding: 10px 15px;
+    padding: 12px 15px;
     border: 1px solid #ddd;
     border-radius: 6px;
 }
 
-.existing-admins li form {
+.user-column li form {
     margin: 0;
 }
 
-.existing-admins li button {
+.user-column li button {
     background-color: #e74c3c;
     color: white;
     border: none;
-    padding: 6px 10px;
-    font-size: 12px;
+    padding: 6px 12px;
+    font-size: 14px;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
-.existing-admins li button:hover {
+.user-column li button:hover {
     background-color: #c0392b;
 }
 
@@ -183,75 +228,39 @@ p {
     margin-top: 40px;
 }
 
+.back-link a {
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.back-link a:hover {
+    text-decoration: underline;
+}
+
 /* === Responsive Design === */
-@media screen and (max-width: 600px) {
-    .container,
-    .dashboard-container,
-    .usermanagement-container {
-        padding: 15px;
+@media screen and (max-width: 768px) {
+    .add-admin-container,
+    .standard-container,
+    .existing-users-container {
         margin: 20px;
+        padding: 20px;
     }
 
-    button {
-        font-size: 14px;
-        padding: 10px;
+    .existing-users-columns {
+        flex-direction: column;
     }
 
-    .dashboard-container a {
-        display: block;
-        margin: 10px 0;
+    .user-column {
+        width: 100%;
     }
 
-    .existing-admins li {
+    .user-column li {
         grid-template-columns: 1fr;
         text-align: center;
     }
 
-    .existing-admins li form {
-        margin-top: 8px;
+    .user-column li form {
+        margin-top: 10px;
     }
-}
-
-/* === Signup/Login Container === */
-.container {
-    max-width: 500px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-/* === Input Fields === */
-input[type="text"],
-input[type="password"],
-input[type="checkbox"] {
-    padding: 12px;
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
-}
-
-/* === Links === */
-a {
-    color: #4CAF50;
-    text-decoration: none;
-    display: inline-block;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-.center-link {
-    text-align: center;
-    margin-top: 20px;
-}
-
-/* === Error Message === */
-p {
-    color: red;
-    text-align: center;
 }
