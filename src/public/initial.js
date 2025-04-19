@@ -1,6 +1,3 @@
-import './bootstrap';
-
-
 document.addEventListener('DOMContentLoaded', function(){
     let button1 = document.getElementById('finished_button');
     let button2 = document.getElementById('upcomming_button');

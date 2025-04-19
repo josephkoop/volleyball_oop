@@ -1,0 +1,206 @@
+<%- include('components/header') %>
+
+<h2 class="page_heading"><%= team.name %></h2>
+
+<div class="player-heading">
+    <button class="button" onclick="window.location.href='/home/teams'">Back</button>
+    <div>
+        <p class="center">Rank: <%= team.rank %></p>
+        <p class="center"><%= team.location %></p>
+    </div>
+    <button id="addPlayerButton" class="button" onclick="event.preventDefault(); event.stopPropagation(); openAddModalP(event)">Add Player</button>
+</div>
+
+<br><br>
+
+<div class="player_card_container">
+    <% players.forEach(player => { %>
+        <%- include('components/player-card', { player: player }) %>
+    <% }) %>
+</div>
+
+<!-- Add Player Modal -->
+<div id="addPlayerModal" class="modal">
+    <div class="modal-content">
+        <form id="addPlayerForm" action="/players/create/<%= team.id %>" method="POST" enctype="multipart/form-data">
+            <!-- <input type="hidden" name="form_type" value="add"/> -->
+            <input type="hidden" name="team_id" value="<%= team.id %>">
+
+            <div>
+                <label for="name">Name: </label>
+                <input type="text" name="name"/>
+            </div>
+            <div>
+                <label for="number">Number: </label>
+                <input type="number" name="number"/>
+            </div>
+            <div>
+                <label for="position">Position: </label>
+                <select name="position">
+                    <option>Select Position</option>
+                    <% ['Setter', 'Libero', 'Outside Hitter', 'Middle Blocker', 'Opposite'].forEach(pos => { %>
+                        <option><%= pos %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="height">
+                <label for="height_feet">Height: </label>
+                <div>
+                    <input type="number" name="height_feet"/>
+                    <input type="number" name="height_inches"/>
+                </div>
+            </div>
+            <div>
+                <label for="age">Age: </label>
+                <input type="number" name="age"/>
+            </div>
+            <div>
+                <label for="image">Upload Image: </label>
+                <input type="file" name="image"/>
+            </div>
+
+            <div class="form-button">
+                <button class="button" type="submit">Add</button>
+                <button class="button" type="button" onclick="closeEditModalP()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Player Modal -->
+<div id="editPlayerModal" class="modal">
+    <div class="modal-content">
+        <form id="editPlayerForm" action="/players/edit/<%= team.id %>/playerPlaceholder" method="POST">
+            <input type="hidden" name="_method" value="PUT">
+            <!-- <input type="hidden" name="form_type" value="edit"/> -->
+            <input type="hidden" name="id" id="editPlayerId"/>
+
+            <div>
+                <label for="name">Name: </label>
+                <input type="text" name="name" id="editPlayerName"/>
+            </div>
+            <div>
+                <label for="number">Number: </label>
+                <input type="number" name="number" id="editPlayerNumber"/>
+            </div>
+            <div>
+                <label for="position">Position: </label>
+                <select name="position" id="editPlayerPosition">
+                    <option value="" disabled>Select Position</option>
+                    <% ['Setter', 'Libero', 'Outside Hitter', 'Middle Blocker', 'Opposite'].forEach(pos => { %>
+                        <option><%= pos %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="height">
+                <label for="height_feet">Height: </label>
+                <div>
+                    <input type="number" name="height_feet" id="editPlayerHeightFeet"/>
+                    <input type="number" name="height_inches" id="editPlayerHeightInches"/>
+                </div>
+            </div>
+            <div>
+                <label for="age">Age: </label>
+                <input type="number" name="age" id="editPlayerAge"/>
+            </div>
+            <div>
+                <label for="image">Upload Image: </label>
+                <input type="file" name="image"/>
+            </div>
+
+            <div class="form-button">
+                <button class="button" type="submit">Update</button>
+                <button class="button" type="button" onclick="closeEditModalP()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Player Modal -->
+<div id="deletePlayerModal" class="modal">
+    <div class="modal-content">
+        <form id="deletePlayerForm" action="/players/delete/teamPlaceholder/playerPlaceholder" method="POST">
+            <!-- <input type="hidden" name="_method" value="DELETE"> -->
+            <p>Check Javascript</p>
+            <div class="form-button">
+                <button class="button" type="submit">Delete</button>
+                <button class="button" type="button" onclick="closeEditModalP()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openAddModalP(){
+        document.getElementById("addPlayerModal").classList.add("show");
+    }
+
+
+    function openDeleteModalP(element, teamId, playerId, name){
+        let modal = document.getElementById("deletePlayerModal")
+        modal.classList.add("show");
+
+        let form = document.getElementById("deletePlayerForm");
+
+        let deleteUrl = "{{ route('players.delete', ['team_id' => ':teamId', 'id' => ':playerId']) }}"
+            .replace(':teamId', teamId)
+            .replace(':playerId', playerId);
+
+        form.action = deleteUrl;
+
+        let message = document.querySelector("#deletePlayerModal p");
+        message.textContent = `Are you sure you want to delete Player ${name}?`;
+    }
+
+
+    function openEditModalP(playerId, teamId, name, number, position, heightFeet, heightInches, age){
+        document.getElementById("editPlayerId").value = playerId;
+        document.getElementById("editPlayerName").value = name;
+        document.getElementById("editPlayerTeam").value = teamId;
+        document.getElementById("editPlayerNumber").value = number;
+        document.getElementById("editPlayerPosition").value = position;
+        document.getElementById("editPlayerHeightFeet").value = heightFeet;
+        document.getElementById("editPlayerHeightInches").value = heightInches;
+        document.getElementById("editPlayerAge").value = age;
+    
+        let formAction = "{{ route('players.edit', ':teamId', ':playerId') }}";
+        action = formAction.replace(':teamId => teamId', ':playerId => playerId');
+        document.getElementById("editPlayerForm").action = formAction;
+
+        document.getElementById("editPlayerModal").classList.add("show");
+    }
+
+
+    function closeEditModalP(){      //Full page refresh causing overhead to remove error messages
+        let url = window.location.pathname;
+        let segments = url.split('/');
+        let teamId = segments[2];
+
+        let teamRoute = "{{ route('pages.players', ':id') }}";
+        let finalUrl = teamRoute.replace(':id', teamId);
+        window.location.href = finalUrl;
+    }
+
+
+    document.addEventListener("click", function(event){
+        let editModal = document.getElementById("editPlayerModal");
+        let editModalContent = document.querySelector("#editPlayerModal .modal-content");
+        if(editModal.classList.contains("show") && !editModalContent.contains(event.target)){
+            closeEditModalP();
+        }
+
+        let addModal = document.getElementById("addPlayerModal");
+        let addModalContent = document.querySelector("#addPlayerModal .modal-content");
+        if(addModal.classList.contains("show") && !addModalContent.contains(event.target)){
+            closeEditModalP();
+        }    
+        
+        let deleteModal = document.getElementById("deletePlayerModal");
+        let deleteModalContent = document.querySelector("#deletePlayerModal .modal-content");
+        if(deleteModal.classList.contains("show") && !deleteModalContent.contains(event.target)){
+            closeEditModalP();
+        }   
+    });
+</script>
+
+<%- include('components/footer') %>

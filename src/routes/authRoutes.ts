@@ -1,4 +1,4 @@
-import express from "express";
+import { Router } from "express";
 import {
     getLogin,
     postLogin,
@@ -11,7 +11,7 @@ import {
     postDeleteUser
 } from "../controllers/authController.js";
 
-const router = express.Router();
+const router = Router();
 
 router.get("/login", getLogin);
 router.post("/login", postLogin);

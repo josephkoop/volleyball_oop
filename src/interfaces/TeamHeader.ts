@@ -1,4 +1,4 @@
-// TeamHeader.ts
+// teamHeader.ts
 export interface Team {
     
 }

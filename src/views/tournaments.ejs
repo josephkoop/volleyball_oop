@@ -1,0 +1,40 @@
+<%- include('components/header') %>
+
+<h1 class="page_heading">Tournaments</h1>
+
+<div id="current_content">
+    <h2>Current Tournaments</h2>
+
+    <% ongoingTournaments.forEach(tournament => { %>
+        <a href="/home/tournaments/<%= tournament.id %>">
+            <%- include('components/tournament-card', { tournament: tournament }) %>
+        </a>
+    <% }) %>
+</div>
+
+<div class="status_bar">
+    <button id="finished_button" class="selected_status">Finished</button>
+    <button id="upcomming_button">Upcoming</button>
+</div>
+
+<div id="finished_content">
+    <p>Finished Tournaments</p>
+
+    <% finishedTournaments.forEach(tournament => { %>
+        <a href="/home/tournaments/<%= tournament.id %>">
+            <%- include('components/tournament-card', { tournament: tournament }) %>
+        </a>
+    <% }) %>
+</div>
+
+<div id="upcomming_content" class="hidden">
+    <p>Upcoming Tournaments</p>
+
+    <% futureTournaments.forEach(tournament => { %>
+        <a href="/home/tournaments/<%= tournament.id %>">
+            <%- include('components/tournament-card', { tournament: tournament }) %>
+        </a>
+    <% }) %>
+</div>
+
+<%- include('components/footer') %>

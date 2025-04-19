@@ -1,0 +1,11 @@
+<%- include('components/header') %>
+
+<%- include('components/tournament-card', { tournament: tournament }) %>
+
+<div class="round_card_container">    
+    <% tournament.rounds.forEach(round => { %>
+        <%- include('components/round-card', { round: round }) %>
+    <% }) %>
+</div>
+
+<%- include('components/footer') %>
