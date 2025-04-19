@@ -1,0 +1,15 @@
+<%- include('components/header') %>
+
+<%- include('components/tournament-card', { tournament: tournament }) %>
+
+<div class="round_card_container">    
+    <% if (tournament.rounds && tournament.rounds.length > 0) { %>
+        <% tournament.rounds.forEach(round => { %>
+            <%- include('components/round-card', { round: round }) %>
+        <% }) %>
+    <% } else { %>
+        <p>No rounds available for this tournament.</p>
+    <% } %>
+</div>
+
+<%- include('components/footer') %>
