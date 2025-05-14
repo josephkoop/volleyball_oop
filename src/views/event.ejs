@@ -1,6 +1,18 @@
 <%- include('components/header') %>
+<br>
 
-<%- include('components/tournament-card', { tournament: tournament }) %>
+<div class="flex-heading-buttons">
+    <button class="button" onclick="window.location.href='/home/tournaments'">Back</button>
+    <button onclick="event.preventDefault(); event.stopPropagation(); openEditModal(event)" id="editTournamentButton" class="button">Edit Tournament</button>
+    <button onclick="event.preventDefault(); event.stopPropagation(); openDeleteModal(event)" id="deleteTournamentButton" class="button">Delete Tournament</button>
+    <% if (tournament.status == 'Future'){ %>
+        <button onclick="event.preventDefault(); event.stopPropagation(); openStartModal(event)" id="startTournamentButton" class="button">Start Tournament</button>
+    <% } else if(tournament.status == 'Ongoing'){ %>
+        <button onclick="event.preventDefault(); event.stopPropagation(); openFinishModal(event)" id="finishTournamentButton" class="button">Finish Tournament</button>
+    <% } %>    
+</div>
+
+<%- include('components/tournament-card', { tournament: tournament, status: true }) %>
 
 <div class="round_card_container">    
     <% if (tournament.rounds && tournament.rounds.length > 0) { %>
@@ -11,5 +23,241 @@
         <p>No rounds available for this tournament.</p>
     <% } %>
 </div>
+
+
+
+<div id="editTournamentModal" class="modal">
+    <div class="modal-content">
+        <form id="editTournamentForm" action="/home/tournaments/edit" method="POST">
+
+            <input type="hidden" name="id" id="editTournamentId"/>
+
+            <div>
+                <label for="name">Name: </label>
+                <input type="text" name="name" id="editTournamentName"/>
+            </div>
+            <div>
+                <label for="venue">Venue: </label>
+                <input type="string" name="venue" id="editTournamentVenue"/>
+            </div>
+            <div>
+                <label for="start_date">Start Date: </label>
+                <input type="date" name="start_date" id="editTournamentStartDate"/>           
+            </div>
+            <div>
+                <label for="end_date">End Date: </label>
+                <input type="date" name="end_date" id="editTournamentEndDate"/>
+            </div>              
+            <div>
+                <label for="organizer">Organizer: </label>
+                <input type="string" name="organizer" id="editTournamentOrganizer"/>
+            </div>              
+            <div>
+                <label for="contact">Contact Number: </label>
+                <input type="string" name="contact" id="editTournamentContact"/>
+            </div>            
+            <div>
+                <label for="description">Description: </label>
+                <textarea type="string" name="description" id="editTournamentDescription"></textarea>
+            </div>              
+            <div class="form-button">
+                <button class="button" type="submit">Update</button>
+                <button class="button" type="button" onclick="closeModal()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+
+<div id="deleteTournamentModal" class="modal">
+    <div class="modal-content">
+        <form id="deleteTournamentForm" action="/home/tournaments/delete" method="POST">
+            <input type="hidden" name="id" id="deleteTournamentId"/>
+
+            <p>Check Javascript</p>
+            <div class="form-button">
+                <button class="button" type="submit">Delete</button>
+                <button class="button" type="button" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<div id="startTournamentModal" class="modal">
+    <div class="modal-content">
+        <form id="startTournamentForm" action="/home/tournaments/start" method="POST">
+            <input type="hidden" name="id" id="startTournamentId"/>
+
+            <div class="w100">Select the teams competing in the tournament.</div>
+            <% teams.forEach(team => { %>
+                <div><label for="teams"><%= team.name %></label><input name="teams" value="<%= team.id %>" type="checkbox"></div>
+            <% }); %>
+
+            <div class="form-button">
+                <button class="button" type="submit">Start</button>
+                <button class="button" type="button" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<div id="finishTournamentModal" class="modal">
+    <div class="modal-content">
+        <form id="startTournamentForm" action="/home/tournaments/finish" method="POST">
+            <input type="hidden" name="id" id="finishTournamentId"/>
+
+            <div class="w100">Verify that the results are correct. You will not be able to make changes after submitting.</div>
+
+            <div class="form-button">
+                <button class="button" type="submit">Finish</button>
+                <button class="button" type="button" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    tournament = <%- JSON.stringify(tournament) %>
+
+
+    function openDeleteModal(){
+        document.getElementById("deleteTournamentId").value = tournament.id;
+
+        let message = document.querySelector("#deleteTournamentModal p");
+        message.textContent = `Are you sure you want to delete tournament ${tournament.name}?`;
+
+        document.getElementById("deleteTournamentModal").classList.add("show");
+    }
+
+
+    function openStartModal(){
+        document.getElementById("startTournamentId").value = tournament.id;
+        document.getElementById("startTournamentModal").classList.add("show");
+    }
+
+
+    function openFinishModal(){
+        document.getElementById("finishTournamentId").value = tournament.id;
+        document.getElementById("finishTournamentModal").classList.add("show");
+    }
+
+
+    function openEditModal(){
+        document.getElementById("editTournamentId").value = tournament.id;
+        document.getElementById("editTournamentName").value = tournament.name;
+        document.getElementById("editTournamentVenue").value = tournament.venue;
+
+        let startDate = tournament.start_date.split('T')[0];
+        let endDate = tournament.end_date.split('T')[0];
+
+        document.getElementById("editTournamentStartDate").value = startDate;
+        document.getElementById("editTournamentEndDate").value = endDate;
+        document.getElementById("editTournamentOrganizer").value = tournament.organizer;
+        document.getElementById("editTournamentContact").value = tournament.contact;
+        document.getElementById("editTournamentDescription").value = tournament.description;
+
+        document.getElementById("editTournamentModal").classList.add("show");
+    }
+
+
+    function closeModal(){
+        document.getElementById("editTournamentModal").classList.remove("show");
+        document.getElementById("deleteTournamentModal").classList.remove("show");
+        document.getElementById("startTournamentModal").classList.remove("show");
+        document.getElementById("finishTournamentModal").classList.remove("show");
+    }
+
+
+    document.addEventListener("click", function(event){
+        let editModal = document.getElementById("editTournamentModal");
+        let editModalContent = document.querySelector("#editTournamentModal .modal-content");
+        if(editModal.classList.contains("show") && !editModalContent.contains(event.target)){
+            closeModal();
+        }
+
+        let deleteModal = document.getElementById("deleteTournamentModal");
+        let deleteModalContent = document.querySelector("#deleteTournamentModal .modal-content");
+        if(deleteModal.classList.contains("show") && !deleteModalContent.contains(event.target)){
+            closeModal();
+        }   
+        let startModal = document.getElementById("startTournamentModal");
+        let startModalContent = document.querySelector("#startTournamentModal .modal-content");
+        if(startModal.classList.contains("show") && !startModalContent.contains(event.target)){
+            closeModal();
+        }
+
+        let finishModal = document.getElementById("finishTournamentModal");
+        let finishModalContent = document.querySelector("#finishTournamentModal .modal-content");
+        if(finishModal.classList.contains("show") && !finishModalContent.contains(event.target)){
+            closeModal();
+        }   
+    });
+</script>
+
+<script>
+    document.getElementById('editTournamentForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const data1 = Object.fromEntries(formData.entries());
+    
+        try {
+            const res = await fetch('/home/tournaments/edit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: data1.id, name: data1.name, venue: data1.venue, start_date: data1.start_date, end_date: data1.end_date, organizer: data1.organizer, contact: data1.contact, description: data1.description })
+            });
+    
+            const data = await res.json();
+    
+            if (!res.ok) {
+                alert(data.errors?.map(e => e.msg).join('\n') || data.error);
+            } else {
+                closeModal();
+                window.location.reload();
+                alert("Tournament updated succesfully.");
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Something went wrong.');
+        }
+    });
+    
+    
+    document.getElementById('deleteTournamentForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+    
+        const id = document.getElementById("deleteTournamentId").value;
+    
+        try {
+            const res = await fetch('/home/tournaments/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+    
+            const data = await res.json();
+    
+            if (!res.ok) {
+                alert(data.error);
+            } else {
+                closeModal();
+                alert("Tournament deleted succesfully.");
+                window.location.href = '/home/tournaments';
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Something went wrong.');
+        }
+    });
+</script>
+
 
 <%- include('components/footer') %>

@@ -3,16 +3,16 @@
     <img src="/images/profile.jpg" alt="Profile Picture"/>
     <p><%= player.position %></p>
     <p>#<%= player.number %></p>
-    <p>Height: <%= player.height_feet %>' <%= player.height_inches %>"</p>
+    <p>Height: <%= player.heightFeet %>' <%= player.heightInches %>"</p>
     <p>Age: <%= player.age %></p>
     <br>
 
     <div class="player-icons">
-        <span onclick="event.preventDefault(); event.stopPropagation(); openEditModalP('<%= player.id %>', '<%= player.team_id %>', '<%= player.name %>', '<%= player.number %>', '<%= player.position %>', '<%= player.height_feet %>', '<%= player.height_inches %>', '<%= player.age %>')">
+        <span onclick="event.preventDefault(); event.stopPropagation(); openEditModalP('<%= player.id %>', '<%= player.name %>', '<%= player.number %>', '<%= player.position %>', '<%= player.heightFeet %>', '<%= player.heightInches %>', '<%= player.age %>')">
             <img class="icon" src="/images/edit.png" alt="Edit Icon"/>
         </span>
 
-        <span onclick="event.preventDefault(); event.stopPropagation(); openDeleteModalP(this, '<%= player.team_id %>', '<%= player.id %>', '<%= player.name %>')">
+        <span onclick="event.preventDefault(); event.stopPropagation(); openDeleteModalP(this, '<%= player.id %>', '<%= player.name %>')">
             <img class="icon" src="/images/delete.png" alt="Delete Icon">
         </span>
     </div>

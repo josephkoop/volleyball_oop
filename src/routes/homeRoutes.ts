@@ -12,11 +12,11 @@ import {
 } from "../controllers/authController.js";
 
 import {
-    index, viewTeams, createTeam, editTeam, deleteTeam, viewPlayers, createPlayer, editPlayer, deletePlayer
+    index, viewTeams, createTeam, editTeam, deleteTeam, viewPlayers, createPlayer, editPlayer, deletePlayer, validateTeam
 } from "../controllers/teamController";
 
 import {
-    viewTournaments, viewEvent
+    viewTournaments, viewEvent, createTournament, editTournament, deleteTournament, validateTournament
 } from "../controllers/tournamentController";
 
 const router = express.Router();
@@ -40,21 +40,25 @@ router.get('/home', index);
 
 // Tournament routes
 router.get('/home/tournaments', viewTournaments);
+router.post('/home/tournaments/add', validateTournament, createTournament);
+
 router.get('/home/tournaments/:id', viewEvent);
+router.post('/home/tournaments/edit', validateTournament, editTournament);
+router.post('/home/tournaments/delete', deleteTournament);
 
 
 // Teams routes
 router.get('/home/teams', viewTeams);
-router.post('/home/teams', createTeam);
-router.put('/home/teams/:id', editTeam);
-router.delete('/home/teams/:id', deleteTeam);
+router.post('/home/teams/add', validateTeam, createTeam);
+router.post('/home/teams/edit', validateTeam, editTeam);               //using post for all
+router.post('/home/teams/delete', deleteTeam);
 
 
 // Players routes under specific team
-router.get('/home/teams/:team_id/players', viewPlayers);
-router.post('/home/teams/:team_id/players', createPlayer);
-router.put('/home/teams/:team_id/players/:id', editPlayer);
-router.delete('/home/teams/:team_id/players/:id', deletePlayer);
+router.get('/home/teams/:teamId/players', viewPlayers);
+router.post('/home/teams/:teamId/players/add', createPlayer);
+router.post('/home/teams/:teamId/players/edit', editPlayer);
+router.post('/home/teams/:teamId/players/delete', deletePlayer);
 
 
 export default router;

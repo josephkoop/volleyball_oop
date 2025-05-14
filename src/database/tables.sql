@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS participants;
 DROP TABLE IF EXISTS players;
+DROP TABLE IF EXISTS participants;
 DROP TABLE IF EXISTS sets;
 DROP TABLE IF EXISTS games;
 DROP TABLE IF EXISTS rounds;
@@ -12,8 +12,8 @@ CREATE TABLE tournaments (
     updated_at TIMESTAMP,
     name VARCHAR(255) NOT NULL,
     venue VARCHAR(255) NOT NULL,
-    date DATE NOT NULL,
-    time TIME NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
     organizer VARCHAR(255) NOT NULL,
     contact VARCHAR(255) NOT NULL,
     status VARCHAR(255) NOT NULL DEFAULT 'Future',
@@ -29,6 +29,14 @@ CREATE TABLE teams (
     location VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE participants (
+    id serial PRIMARY KEY,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    tournament_id BIGINT NOT NULL REFERENCES tournaments(id) ON DELETE CASCADE,
+    team_id BIGINT NOT NULL REFERENCES teams(id)
+);
+
 CREATE TABLE rounds (
     id serial PRIMARY KEY,
     created_at TIMESTAMP,
@@ -42,9 +50,9 @@ CREATE TABLE games (
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     round_id BIGINT NOT NULL REFERENCES rounds(id) ON DELETE CASCADE,
-    team1_id BIGINT NOT NULL REFERENCES teams(id),
-    team2_id BIGINT NOT NULL REFERENCES teams(id),
-    winner_id BIGINT NOT NULL REFERENCES teams(id),
+    par1_id BIGINT NOT NULL REFERENCES participants(id),
+    par2_id BIGINT NOT NULL REFERENCES participants(id),
+    winner_id BIGINT NOT NULL REFERENCES participants(id),
     time TIME NOT NULL
 );
 
@@ -69,12 +77,4 @@ CREATE TABLE players (
     height_inches INT NULL,
     age INT,
     image VARCHAR(255)
-);
-
-CREATE TABLE participants (
-    id serial PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    tournament_id BIGINT NOT NULL REFERENCES tournaments(id) ON DELETE CASCADE,
-    team_id BIGINT NOT NULL REFERENCES teams(id)
 );

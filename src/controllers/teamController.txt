@@ -3,7 +3,6 @@
 import { TeamClass } from '../models/TeamClass';
 import { PlayerClass } from '../models/PlayerClass';
 import { Request, Response } from 'express';
-import { validationResult, body } from 'express-validator';
 import path from 'path';
 
 export const index = async (req: Request, res: Response): Promise<void> => {            //move this function to different controller
@@ -26,7 +25,7 @@ export const viewTeams = async(req: Request, res: Response): Promise<void> => {
         console.error('Controller viewTeams error: ', error);
         res.status(500).json({ err: 'An error occured.' });
     }
-}
+  }
 
   // Get players for a specific team
 export const viewPlayers = async(req: Request, res: Response): Promise<void> => {
@@ -45,64 +44,54 @@ export const viewPlayers = async(req: Request, res: Response): Promise<void> => 
     }
 }
 
-export const validateTeam = [
-    body('name').notEmpty().withMessage('Name is required.'),
-    body('rank').isInt({ min: 1 }).withMessage('Rank must be a positive integer.'),
-    body('location').notEmpty().withMessage('Location is required.'),
-];
-  
-// Create
-export const createTeam = async (req: Request, res: Response): Promise<any> => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-  
+  // Create a new team
+export const createTeam = async(req: Request, res: Response): Promise<void> => {
     const { name, rank, location } = req.body;
     try {
-      const newTeam = new TeamClass(undefined, name, rank, location);
-      await newTeam.saveTeamDB();
-      res.status(201).json({ message: 'Team added successfully', team: newTeam });
+        const newTeam = new TeamClass(
+          undefined,
+          name,
+          rank,
+          location
+        );
+        newTeam.saveTeamDB();
+        
+        res.redirect('/home/teams')         //.flash('success', 'Team Added');
     } catch (error) {
-      console.error('createTeam error:', error);
-      res.status(500).json({ error: 'An error occured.' });
+        console.error('Controller createTeam error: ', error);
+        res.status(500).json({ err: 'An error occured.' });
     }
-};
-  
-  // Edit
-export const editTeam = async (req: Request, res: Response): Promise<any> => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-  
+  }
+
+  // Edit an existing team
+export const editTeam = async(req: Request, res: Response): Promise<void> => {
     const { id, name, location, rank } = req.body;
     try {
-      const team = await TeamClass.getTeamDB(parseInt(id, 10));
-      if (!team) return res.status(404).json({ error: 'Team not found' });
-  
-      await team.editTeamDB(parseInt(id, 10), name, location, rank);
-      res.status(200).json({ message: 'Team updated successfully' });
+        const team = await TeamClass.getTeamDB(parseInt(id, 10));
+        if(team){
+            await team.editTeamDB(parseInt(id, 10), name, location, rank);
+        }
+        res.redirect('/home/teams')         //.flash('success', 'Team Updated');
     } catch (error) {
-      console.error('editTeam error:', error);
-      res.status(500).json({ error: 'An error occured.' });
+        console.error('Controller editTeam error: ', error);
+        res.status(500).json({ err: 'An error occured.' });
     }
-};
-  
-  // Delete
-  export const deleteTeam = async (req: Request, res: Response): Promise<any> => {
+  }
+
+  // Delete a team
+export const deleteTeam = async(req: Request, res: Response): Promise<void> => {
     const { id } = req.body;
     try {
-      const team = await TeamClass.getTeamDB(parseInt(id, 10));
-      if (!team) return res.status(404).json({ error: 'Team not found' });
-  
-      await team.deleteTeamDB();
-      res.status(200).json({ message: 'Team deleted successfully' });
+        const team = await TeamClass.getTeamDB(parseInt(id, 10));
+        if(team){
+            await team.deleteTeamDB();        
+        }
+        res.redirect('/home/teams')         //.flash('success', 'Team Deleted');
     } catch (error) {
-      console.error('deleteTeam error:', error);
-      res.status(500).json({ error: 'An error occured.' });
+        console.error('Controller deleteTeam error: ', error);
+        res.status(500).json({ err: 'An error occured.' });
     }
-  };
+  }
 
   // Create a player
 export const createPlayer = async(req: Request, res: Response): Promise<void> => {

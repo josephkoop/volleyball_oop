@@ -3,14 +3,14 @@ TRUNCATE TABLE tournaments, teams, rounds, games, sets, players, participants RE
 
 
 -- Inserting data into the 'tournaments' table
-INSERT INTO tournaments (name, venue, date, time, organizer, contact, status, description)
+INSERT INTO tournaments (name, venue, start_date, end_date, organizer, contact, status, description)
 VALUES
-    ('2024 Nationals', 'Countryside Park, Spanish Lookout', '2024-02-15', '9:00', 'Jeff Dueck', '000-0000', 'Finished', '12 teams competed in Belize\s biggest tournament.'),
-    ('Spanish Lookout League Fall 2024', 'Countryside Park, Spanish Lookout', '2024-08-15', '9:00', 'Jeff Dueck', '000-0000', 'Finished', 'Spanish Lookout League.'),
-    ('Belize City Clash', 'Belize City', '2024-12-15', '9:00', 'Random Y', '000-0000', 'Finished', 'Blah blah blah.'),
-    ('Dangriga Battle', 'Russel Stadium, Dangriga', '2024-02-07', '9:00', 'Random X', '000-0000', 'Ongoing', 'Blah blah blah.'),
-    ('Benque Championship', 'Benque', '2024-06-30', '9:00', 'Random Z', '000-0000', 'Future', 'Blah blah blah.'),
-    ('2025 Nationals', 'Countryside Park, Spanish Lookout', '2024-08-25', '9:00', 'Jeff Dueck', '000-0000', 'Future', '12 teams competing in Belize\s biggest tournament.');
+    ('2024 Nationals', 'Countryside Park, Spanish Lookout', '2024-02-15', '2024-02-17', 'John Johnson', '000-0000', 'Finished', '12 teams competed in Belize\s biggest tournament.'),
+    ('Spanish Lookout League Fall 2024', 'Countryside Park, Spanish Lookout', '2024-08-15', '2024-10-15', 'Brad Bradley', '000-0000', 'Finished', 'Spanish Lookout League.'),
+    ('Belize City Clash', 'Belize City', '2024-12-15', '2024-12-15', 'Random Y', '000-0000', 'Finished', 'Blah blah blah.'),
+    ('Dangriga Battle', 'Russel Stadium, Dangriga', '2024-02-07', '2024-02-07', 'Random X', '000-0000', 'Ongoing', 'Blah blah blah.'),
+    ('Benque Championship', 'Benque', '2024-06-30', '2024-06-30', 'Random Z', '000-0000', 'Future', 'Blah blah blah.'),
+    ('2025 Nationals', 'Countryside Park, Spanish Lookout', '2024-08-25', '2024-08-27', 'Tom Thomas', '000-0000', 'Future', '12 teams competing in Belize\s biggest tournament.');
 
 
 
@@ -33,6 +33,34 @@ INSERT INTO teams (rank, name, location) VALUES
 
 
 
+INSERT INTO participants (tournament_id, team_id) VALUES
+    (1, 1),
+    (1, 2),
+    (1, 3),
+    (1, 4),
+    (1, 5),
+    (1, 6),
+    (1, 7),
+    (1, 8),
+    (1, 9),
+    (1, 10),
+    (1, 11),
+    (1, 12),
+
+    (2, 1),
+    (2, 6),
+    (2, 7),
+    (2, 8),
+    (2, 12),
+    (2, 14),
+
+    (3, 2),
+    (3, 3),
+    (3, 4),
+    (3, 5);
+
+
+
 -- Inserting data into the 'rounds' table
 INSERT INTO rounds (tournament_id, name) VALUES
     (1, 'Round 1'),
@@ -52,17 +80,11 @@ INSERT INTO rounds (tournament_id, name) VALUES
 
     (3, 'Semi Finals'),
     (3, 'Finals');
-    --(4, 'Semi Finals'),
-    --(4, 'Finals');
-    --(5, 'Semi Finals'),
-    --(5, 'Finals');
-    --(6, 'Semi Finals'),
-    --(6, 'Finals');
 
 
 
 -- Inserting data into the 'games' table
-INSERT INTO games (round_id, team1_id, team2_id, winner_id, time) VALUES
+INSERT INTO games (round_id, par1_id, par2_id, winner_id, time) VALUES
     (1, 1, 3, 3, '7:00'),
     (1, 2, 12, 2, '7:00'),
     (1, 6, 4, 4, '8:00'),
@@ -103,53 +125,37 @@ INSERT INTO games (round_id, team1_id, team2_id, winner_id, time) VALUES
     (6, 3, 4, 4, '12:00'),
     (6, 8, 10, 8, '12:00'),
 
-    (7, 1, 7, 1, '7:00'),
-    (7, 12, 8, 12, '7:00'),
-    (7, 6, 14, 6, '7:00'),
+    (7, 13, 15, 13, '7:00'),
+    (7, 17, 16, 17, '7:00'),
+    (7, 14, 18, 14, '7:00'),
 
-    (8, 1, 14, 1, '7:00'),
-    (8, 12, 7, 12, '7:00'),
-    (8, 6, 8, 6, '7:00'),
+    (8, 13, 14, 13, '7:00'),
+    (8, 17, 15, 17, '7:00'),
+    (8, 18, 16, 18, '7:00'),
 
-    (9, 1, 12, 12, '7:00'),
-    (9, 6, 7, 7, '7:00'),
-    (9, 8, 14, 8, '7:00'),
+    (9, 13, 17, 17, '7:00'),
+    (9, 18, 15, 15, '7:00'),
+    (9, 16, 14, 16, '7:00'),
 
-    (10, 1, 6, 6, '7:00'),
-    (10, 12, 14, 12, '7:00'),
-    (10, 7, 8, 8, '7:00'),
+    (10, 13, 14, 14, '7:00'),
+    (10, 17, 18, 17, '7:00'),
+    (10, 15, 16, 16, '7:00'),
 
-    (11, 1, 8, 1, '7:00'),
-    (11, 12, 7, 12, '7:00'),
-    (11, 6, 14, 6, '7:00'),
+    (11, 13, 16, 13, '7:00'),
+    (11, 17, 15, 17, '7:00'),
+    (11, 14, 18, 14, '7:00'),
 
-    (12, 1, 6, 6, '7:00'),
-    (12, 8, 12, 8, '7:00'),
+    (12, 13, 14, 14, '7:00'),
+    (12, 16, 17, 16, '7:00'),
 
-    (13, 1, 12, 12, '7:00'),
-    (13, 6, 8, 6, '7:00'),
+    (13, 13, 17, 17, '7:00'),
+    (13, 14, 16, 14, '7:00'),
 
-    (14, 2, 3, 2, '7:00'),
-    (14, 4, 5, 4, '7:00'),
+    (14, 19, 20, 19, '7:00'),
+    (14, 21, 22, 21, '7:00'),
 
-    (15, 2, 4, 2, '7:00'),
-    (15, 3, 5, 3, '7:00');
-
-/*
-    The following entries are commented out:
-    (16, 8, 9, 8, '7:00'),
-    (16, 10, 11, 10, '7:00'),
-    (17, 8, 10, 3, '7:00'),
-    (17, 9, 11, 3, '7:00'),
-    (18, 2, 3, 3, '7:00'),
-    (18, 8, 9, 9, '7:00'),
-    (19, 3, 9, 9, '7:00'),
-    (19, 2, 8, 8, '7:00'),
-    (20, 4, 5, 5, '7:00'),
-    (20, 10, 11, 10, '7:00'),
-    (21, 5, 10, 10, '7:00'),
-    (21, 4, 11, 4, '7:00');
-*/
+    (15, 19, 21, 19, '7:00'),
+    (15, 20, 22, 20, '7:00');
 
 
 
@@ -325,42 +331,3 @@ INSERT INTO players (team_id, name, number, position, height_feet, height_inches
     (12, 'Kai Smith', 5, 'Outside Hitter', 6, 6, 27, 'images/profile.jpg'),
     (12, 'Ivan Johnson', 6, 'Middle Blocker', 6, 11, 27, 'images/profile.jpg'),
     (12, 'Leo Johnson', 7, 'Outside Hitter', 5, 1, 25, 'images/profile.jpg');
-
-
-
-    -- Inserting data into the 'participants' table
-INSERT INTO participants (tournament_id, team_id) VALUES
-    (1, 1),
-    (1, 2),
-    (1, 3),
-    (1, 4),
-    (1, 5),
-    (1, 6),
-    (1, 7),
-    (1, 8),
-    (1, 9),
-    (1, 10),
-    (1, 11),
-    (1, 12),
-    (2, 1),
-    (2, 6),
-    (2, 12),
-    (2, 14),
-    (2, 8),
-    (2, 7),
-    (3, 2),
-    (3, 3),
-    (3, 4),
-    (3, 5),
-    (4, 8),
-    (4, 9),
-    (4, 10),
-    (4, 11),
-    (5, 2),
-    (5, 3),
-    (5, 8),
-    (5, 9),
-    (6, 4),
-    (6, 5),
-    (6, 10),
-    (6, 11);

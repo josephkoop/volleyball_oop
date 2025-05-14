@@ -1,0 +1,5 @@
+Tournament and teams send a success json message but print a different message.
+Store dates as dates only.
+
+Change edit functions to use class attributes instead of passing in data.
+Reset forms or leave them partially filled?

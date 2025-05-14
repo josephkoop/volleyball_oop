@@ -28,6 +28,10 @@ li{
     list-style: none;
 }
 
+.w100{
+    width: 100%;
+}
+
 .game_division{
     color: red;
 }
@@ -207,7 +211,6 @@ li{
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    max-width: 100vh;
 }
 
 .player_card:hover{
@@ -351,7 +354,7 @@ li{
     text-align: right;
 }
 
-.modal-content input, .modal-content select{
+.modal-content input, .modal-content select, .modal-content textarea{
     width: 100%;
     border: 1px solid;
     background-color: var(--hover);
@@ -388,7 +391,7 @@ li{
     transition: transform 0.5s ease, opacity 0.5s ease;
 }
 
-.player-heading{
+.flex-heading-buttons{
     display: flex;
     flex-direction: row;
     justify-content: space-between;

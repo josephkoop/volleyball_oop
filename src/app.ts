@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import session from "express-session";
 import path from "path";
 import dotenv from "dotenv";
@@ -14,6 +14,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
+
+const loggingMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] ${req.method} ${req.url}`);
+    next();
+};
+
+app.use(loggingMiddleware);
 
 app.use(session({
     secret: process.env.SESSION_SECRET || 'your_session_secret',
