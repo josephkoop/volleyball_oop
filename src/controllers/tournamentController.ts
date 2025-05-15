@@ -261,12 +261,17 @@ export const addRound = async(req: Request, res: Response): Promise<any> => {
 
 export const saveRound = async(req: Request, res: Response): Promise<any> => {
     let { id, round_id, game_id, par1, par2, points1_1, points2_1, points1_2, points2_2, points1_3, points2_3 } = req.body;
-    points1_1 = Number(points1_1);
-    points2_1 = Number(points2_1);
-    points1_2 = Number(points1_2);
-    points2_2 = Number(points2_2);
-    points1_3 = Number(points1_3);
-    points2_3 = Number(points2_3);
+
+    const formatPoints = (val: any) => {
+        return val === '' || val === null || val === undefined ? null : Number(val);
+    };
+
+        points1_1 = formatPoints(points1_1);
+        points2_1 = formatPoints(points2_1);
+        points1_2 = formatPoints(points1_2);
+        points2_2 = formatPoints(points2_2);
+        points1_3 = formatPoints(points1_3);
+        points2_3 = formatPoints(points2_3);
 
     if(!par1 || !par2 || par1 == par2){
         return res.status(404).json({ error: 'Both teams are required.' });
@@ -276,8 +281,9 @@ export const saveRound = async(req: Request, res: Response): Promise<any> => {
         return res.status(404).json({ error: 'Points cannot be negative.' });
     }
 
+    console.log(points1_1, points2_1);
     if(points1_1 || points2_1){
-        if(!points1_1 || !points2_1){
+        if(points1_1 == null || points2_1 == null){
             return res.status(404).json({ error: 'Both teams must have points (set #1).' });
         }
         if(points1_1 > 25 || points2_1 > 25){
@@ -288,7 +294,7 @@ export const saveRound = async(req: Request, res: Response): Promise<any> => {
     }
 
     if(points1_2 || points2_2){
-        if(!points1_2 || !points2_2){
+        if(points1_2 == null || points2_2 == null){
             return res.status(404).json({ error: 'Both teams must have points (set #2).' });
         }
         if(points1_1 < 25 && points2_1 < 25){
@@ -306,7 +312,7 @@ export const saveRound = async(req: Request, res: Response): Promise<any> => {
     }
 
     if(points1_3 || points2_3){
-        if(!points1_3 || !points2_3){
+        if(points1_3 == null || points2_3 == null){
             return res.status(404).json({ error: 'Both teams must have points (set #3).' });
         }
         if(points1_2 < 25 && points2_2 < 25){
@@ -345,11 +351,11 @@ export const saveRound = async(req: Request, res: Response): Promise<any> => {
         //console.log(updatedGame);
 
         await tournament.deleteSetsDB(game_id);
-        if(points1_1){
+        if(points1_1 != null){
             await tournament.addSetDB(game_id, points1_1, points2_1);
-            if(points1_2){
+            if(points1_2 != null){
                 await tournament.addSetDB(game_id, points1_2, points2_2);
-                if(points1_3){
+                if(points1_3 != null){
                     await tournament.addSetDB(game_id, points1_3, points2_3);
                 }
             }
@@ -392,16 +398,49 @@ export const addGame = async(req: Request, res: Response): Promise<any> => {
     }
 }
 
-export const finishTournament = async(req: Request, res: Response): Promise<any> => {
+export const finishTournament = async (req: Request, res: Response): Promise<any> => {
+  try {
     const { id } = req.body;
-    try {
-        const tournament = await TournamentClass.getTournamentDB(parseInt(id, 10));
-        if (!tournament) return res.status(404).json({ error: 'Tournament not found' });
+    const tournament = await TournamentClass.getTournamentDB(id);
+    if (!tournament) return res.status(404).json({ error: 'Tournament not found' });
 
-        await tournament.finishTournamentDB();
-        res.status(201).json({ message: 'Tournament finished successfully' });
-    } catch (error) {
-        console.error('Controller finishTournament error: ', error);
-        res.status(500).json({ error: 'An error occured.' });
+    const gameRows = await TournamentClass.getGameIdsDB(id);
+    for (const game of gameRows) {
+      const game_id = game.id;
+      const sets = await TournamentClass.getSetsDB(game_id);
+
+      if (sets.length < 2 || sets.length > 3) {
+        return res.status(400).json({ error: `Not all games have 2 or 3 sets.` });
+      }
+
+      let wins1 = 0;
+      let wins2 = 0;
+
+      for (let i = 0; i < sets.length; i++) {
+        const { points1, points2 } = sets[i];
+        if (i < 2) {
+          if (points1 >= 25 && points1 > points2) wins1++;
+          else if (points2 >= 25 && points2 > points1) wins2++;
+        } else {
+          if (points1 >= 15 && points1 > points2) wins1++;
+          else if (points2 >= 15 && points2 > points1) wins2++;
+        }
+      }
+
+      if ((wins1 === 2 && wins2 < 2) || (wins2 === 2 && wins1 < 2)) {
+        const { par1_id, par2_id } = await TournamentClass.getGameParticipantsDB(game_id);
+        const winner_id = wins1 === 2 ? par1_id : par2_id;
+        await TournamentClass.setGameWinnerDB(game_id, winner_id);
+      } else {
+        return res.status(400).json({ error: `Game ${game_id} does not have a valid winner.` });
+      }
     }
+
+    await tournament.updateTournamentDB("Finished");
+    res.status(200).json({ message: "Tournament finished successfully." });
+
+  } catch (err) {
+    console.error("Error in finishTournament:", err);
+    res.status(500).json({ error: "An error occurred while finishing the tournament." });
+  }
 }

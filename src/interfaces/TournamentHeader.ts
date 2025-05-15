@@ -16,7 +16,6 @@ export interface Tournament {
     deleteTournamentDB(): any;
     addParticipantDB(team_id: number): any;
     updateTournamentDB(status: string): any;
-    finishTournamentDB(): any;
 
     addRoundDB(name: string): any;
     saveRoundDB(): any;

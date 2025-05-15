@@ -15,3 +15,9 @@ Validate set 3 and update the game winner when you finish the tournament.
 Change loop inserts into a single insert that inserts multiplie rows.
 
 Could delete null sets during finish.
+
+Catch null error before model.
+
+Add which game to the error message.
+
+Bug in checking for 2 or 3 sets (or in saving games).

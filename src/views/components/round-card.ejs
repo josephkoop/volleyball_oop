@@ -3,7 +3,9 @@
 <div class="round_card" id="round_<%= index %>" data-round='<%- JSON.stringify(round) %>' data-tournament='<%- JSON.stringify(tournament) %>' data-participants='<%- JSON.stringify(participants) %>'>
     <div class="gameOuter"></div>
 
-    <div><button onclick="event.preventDefault(); event.stopPropagation(); deleteRound(event)" data-id="<%= round.id %>" id="deleteRoundButton" class="button">Delete Round</button></div>
+    <div>
+        <button onclick="event.preventDefault(); event.stopPropagation(); deleteRound(event)" data-id="<%= round.id %>" id="deleteRoundButton" class="button">Delete Round</button>
+    </div>
 </div>
 
 <script>

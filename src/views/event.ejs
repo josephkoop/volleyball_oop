@@ -27,6 +27,7 @@
 <% } %>
 
 <button onclick="event.preventDefault(); event.stopPropagation(); openAddRoundModal(event)" id="addRoundButton" class="button">Add Round</button>
+<button onclick="event.preventDefault(); event.stopPropagation(); saveAllRounds()" id="saveAllRoundsButton" class="button">Save All</button>
 
 <div class="round_card_container">    
     <% if (tournament.rounds && tournament.rounds.length > 0) { %>
@@ -365,7 +366,12 @@
             alert('Something went wrong.');
         }
     });
-    
+
+    function saveAllRounds(){
+        document.querySelectorAll('.game-form').forEach(form => {
+            form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        });
+    }
     
     async function deleteRound(event){
     
@@ -397,6 +403,8 @@
     document.getElementById('finishTournamentForm').addEventListener('submit', async function(e) {
         e.preventDefault();
     
+        saveAllRounds();
+        
         const id = document.getElementById("finishTournamentId").value;
     
         try {

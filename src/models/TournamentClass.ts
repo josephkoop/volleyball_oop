@@ -88,7 +88,7 @@ export class TournamentClass implements Tournament {
     
     async updateTournamentDB(status: string): Promise<any> {
       await query('UPDATE tournaments SET status = $1 WHERE id = $2 RETURNING *;', [status, this.id]);
-    } 
+    }
     
     async addParticipantDB(team_id: number): Promise<any> {
       await query('INSERT INTO participants (tournament_id, team_id) VALUES ($1, $2)', [this.id, team_id]); 
@@ -131,48 +131,24 @@ export class TournamentClass implements Tournament {
       await query('INSERT INTO sets (game_id, points1, points2) VALUES ($1, $2, $3)', [game_id, points1, points2]);
     }
     
-    async finishTournamentDB(): Promise<any> {
-      const games = await query(`SELECT id FROM games WHERE round_id IN (SELECT id FROM rounds WHERE tournament_id = $1);`, [this.id]);
+    static async getGameIdsDB(tournament_id: number): Promise<any> {
+      const result = await query(`SELECT g.id FROM games g INNER JOIN rounds r ON g.round_id = r.id WHERE r.tournament_id = $1;`, [tournament_id]);
+      return result.rows;
+    }
 
-      for (const game of games.rows) {
-        const game_id = game.id;
+    static async getGameParticipantsDB(game_id: number): Promise<any> {
+      const result = await query(`SELECT par1_id, par2_id FROM games WHERE id = $1`, [game_id]);
+      return result.rows[0];
+    }
 
-        const setsResult = await query(`SELECT * FROM sets WHERE game_id = $1 ORDER BY id ASC`, [game_id]);
-        const sets = setsResult.rows;
+    static async getSetsDB(game_id: number): Promise<any> {
+      const result = await query(`SELECT points1, points2 FROM sets WHERE game_id = $1 ORDER BY id ASC`, [game_id]);
+      return result.rows;
+    }
 
-        if (sets.length < 2 || sets.length > 3) throw new Error(`Game ${game_id} does not have 2 or 3 sets.`);
-
-        let wins1 = 0;
-        let wins2 = 0;
-        let winner = 0;
-
-        for (let i = 0; i < sets.length; i++) {
-          const { points1, points2 } = sets[i];
-
-          if (i < 2) {
-            if (points1 >= 25 && points1 > points2) wins1++;
-            else if (points2 >= 25 && points2 > points1) wins2++;
-          } else {
-            if (points1 >= 15 && points1 > points2) wins1++;
-            else if (points2 >= 15 && points2 > points1) wins2++;
-          }
-        }
-
-        if (wins1 === 2 && wins2 < 2) winner = 1;
-        else if (wins2 === 2 && wins1 < 2) winner = 2;
-        else throw new Error(`Invalid score structure in game ${game_id}.`);
-
-        const gameData = await query(`SELECT par1_id, par2_id FROM games WHERE id = $1`, [game_id]);
-        const { par1_id, par2_id } = gameData.rows[0];
-
-        const winner_id = winner === 1 ? par1_id : par2_id;
-
-        await query(`UPDATE games SET winner_id = $1 WHERE id = $2`, [winner_id, game_id]);
-      }
-
-      await this.updateTournamentDB("Finished");
-    }  
-
+    static async setGameWinnerDB(game_id: number, winner_id: number): Promise<any> {
+      await query(`UPDATE games SET winner_id = $1 WHERE id = $2`, [winner_id, game_id]);
+    }
 
 
     

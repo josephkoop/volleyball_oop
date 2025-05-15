@@ -16,7 +16,7 @@ import {
 } from "../controllers/teamController";
 
 import {
-    viewTournaments, viewEvent, createTournament, editTournament, deleteTournament, validateTournament, startTournament, finishTournament, addRound, deleteRound, addGame, saveRound
+    viewTournaments, viewEvent, createTournament, editTournament, deleteTournament, validateTournament, startTournament, finishTournament, addRound, deleteRound, saveRound
 } from "../controllers/tournamentController";
 
 const router = express.Router();
