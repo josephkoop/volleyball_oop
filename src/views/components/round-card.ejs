@@ -1,21 +1,122 @@
 <h2 class="round_card_name"><%= round.name %></h2>
 
-<div class="round_card">
-    <% round.games.forEach(game => { %>
-        <div class="game_division">
-            <% if (game.par1_id === game.winner_id) { %>
-                <h3><strong><%= game.par1.name %></strong> - <%= game.par2.name %></h3>
-            <% } else { %>
-                <h3><%= game.par1.name %> - <strong><%= game.par2.name %></strong></h3>
-            <% } %>
+<div class="round_card" id="round_<%= index %>" data-round='<%- JSON.stringify(round) %>' data-tournament='<%- JSON.stringify(tournament) %>' data-participants='<%- JSON.stringify(participants) %>'>
+    <div class="gameOuter"></div>
 
-            <% game.sets.forEach(set => { %>
-                <% if (set.points1 > set.points2) { %>
-                    <p><strong><%= set.points1 %></strong> - <%= set.points2 %></p>
-                <% } else { %>
-                    <p><%= set.points1 %> - <strong><%= set.points2 %></strong></p>
-                <% } %>
-            <% }) %>
-        </div> 
-    <% }) %>
+    <div><button onclick="event.preventDefault(); event.stopPropagation(); deleteRound(event)" data-id="<%= round.id %>" id="deleteRoundButton" class="button">Delete Round</button></div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function (){
+        let card = document.getElementById('round_<%= index %>');
+
+        let round = JSON.parse(card.dataset.round);
+        let tournament = JSON.parse(card.dataset.tournament);
+        let participants = JSON.parse(card.dataset.participants);
+
+        if(tournament.status == "Finished"){
+            round.games.forEach(game => {
+                console.log(round.games);
+                let gameInner = `<div class="game_division">`;
+                    if(game.par1_id == game.winner_id){
+                        gameInner += `<h3><strong>${game.par1.name}</strong> - ${game.par2.name}</h3>`;
+                    }else if(game.par2.id == game.winner_id){
+                        gameInner += `<h3>${game.par1.name} - <strong>${game.par2.name}</strong></h3>`;
+                    } else {
+                        gameInner += `<h3><strong>${game.par1.name} - <strong>${game.par2.name}</strong></h3>`;
+                    }
+
+                    game.sets.forEach(set => {
+                        if (set.points1 > set.points2) {
+                            gameInner += `<p><strong>${set.points1}</strong> - ${set.points2}</p>`;
+                        } else {
+                            gameInner += `<p>${set.points1} - <strong>${set.points2}</strong></p>`;
+                        }
+                    })
+                gameInner += `</div>`;
+                card.querySelector('.gameOuter').innerHTML += gameInner;
+            });
+        } else {
+            console.log(round.games);
+            round.games.forEach(game => {
+                let gameInner = 
+                `<div class="game_division2">
+                    <form id="roundForm_${game.id}" class="game-form" data-round_id=${round.id} data-game_id=${game.id}>
+                    <select name="par1">
+                        <option disabled selected value=0>Select</option>`;
+                        participants.forEach(par => {
+                            gameInner += `<option ${par.id == game.par1_id ? 'selected' : ''} value="${par.id}">${par.name}</option>`
+                        })
+                gameInner += 
+                    `</select>
+                    <select name="par2">
+                        <option disabled selected value=0>Select</option>`;
+                        participants.forEach(par => {
+                            gameInner += `<option ${par.id == game.par2_id ? 'selected' : ''} value="${par.id}">${par.name}</option>`
+                        })
+                gameInner += `</select>`;
+                let count = 1;
+                game.sets.forEach(set => {
+                    gameInner += `
+                    <input type="number" name="points1_${count}" value=${set.points1}>
+                    <input type="number" name="points2_${count}" value=${set.points2}>`;
+                    count++;
+                })
+                
+                for(count; count <= 3; count++){
+                    gameInner += `
+                    <input type="number" name="points1_${count}" value="">
+                    <input type="number" name="points2_${count}" value="">`;
+                }
+                gameInner += `
+                <div><button type="submit" class="button">Save Game</button></div>
+                </form></div>`
+
+                card.querySelector('.gameOuter').innerHTML += gameInner;
+            });
+        }
+
+
+        card.querySelectorAll('.game-form').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const data = new FormData(form);
+
+                const par1 = data.get('par1');
+                const par2 = data.get('par2');
+                const points1_1 = data.get('points1_1');
+                const points2_1 = data.get('points2_1');
+                const points1_2 = data.get('points1_2');
+                const points2_2 = data.get('points2_2');
+                const points1_3 = data.get('points1_3');
+                const points2_3 = data.get('points2_3');
+
+                const id = tournament.id;
+                const round_id = form.getAttribute('data-round_id');
+                const game_id = form.getAttribute('data-game_id');
+
+                console.log(id, parseInt(round_id, 10), parseInt(game_id, 10));
+            
+                try {
+                    const res = await fetch('/home/tournaments/rounds/save', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id, round_id, game_id, par1, par2, points1_1, points2_1, points1_2, points2_2, points1_3, points2_3 })
+                    });
+            
+                    const data = await res.json();
+            
+                    if (!res.ok) {
+                        alert(data.error);
+                    } else {
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Something went wrong.');
+                }
+            });
+        });
+    });
+
+</script>

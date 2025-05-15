@@ -14,10 +14,24 @@
 
 <%- include('components/tournament-card', { tournament: tournament, status: true }) %>
 
+<% if(tournament.status == 'Ongoing'){ %>
+    <div class="tournament_card">
+        <h3>Participants: </h3>
+        <ul>
+            <% participants.forEach(par => { %>
+                <li><%= par.name %></li>
+            <% }) %>
+        </ul>
+            
+    </div>
+<% } %>
+
+<button onclick="event.preventDefault(); event.stopPropagation(); openAddRoundModal(event)" id="addRoundButton" class="button">Add Round</button>
+
 <div class="round_card_container">    
     <% if (tournament.rounds && tournament.rounds.length > 0) { %>
-        <% tournament.rounds.forEach(round => { %>
-            <%- include('components/round-card', { round: round }) %>
+        <% tournament.rounds.forEach((round, index) => { %>
+            <%- include('components/round-card', { round: round, tournament: tournament, participants: participants, index: index}) %>
         <% }) %>
     <% } else { %>
         <p>No rounds available for this tournament.</p>
@@ -28,7 +42,7 @@
 
 <div id="editTournamentModal" class="modal">
     <div class="modal-content">
-        <form id="editTournamentForm" action="/home/tournaments/edit" method="POST">
+        <form id="editTournamentForm" method="POST">
 
             <input type="hidden" name="id" id="editTournamentId"/>
 
@@ -73,7 +87,7 @@
 
 <div id="deleteTournamentModal" class="modal">
     <div class="modal-content">
-        <form id="deleteTournamentForm" action="/home/tournaments/delete" method="POST">
+        <form id="deleteTournamentForm" method="POST">
             <input type="hidden" name="id" id="deleteTournamentId"/>
 
             <p>Check Javascript</p>
@@ -89,7 +103,7 @@
 
 <div id="startTournamentModal" class="modal">
     <div class="modal-content">
-        <form id="startTournamentForm" action="/home/tournaments/start" method="POST">
+        <form id="startTournamentForm" method="POST">
             <input type="hidden" name="id" id="startTournamentId"/>
 
             <div class="w100">Select the teams competing in the tournament.</div>
@@ -107,9 +121,28 @@
 
 
 
+<div id="addRoundModal" class="modal">
+    <div class="modal-content">
+        <form id="addRoundForm" method="POST">
+            <label for="name">Name: </label>
+            <input type="text" name="name">
+
+            <label for="amount">Number of games: </label>
+            <input type="number" name="amount">
+
+            <div class="form-button">
+                <button class="button" type="submit">Add</button>
+                <button class="button" type="button" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
 <div id="finishTournamentModal" class="modal">
     <div class="modal-content">
-        <form id="startTournamentForm" action="/home/tournaments/finish" method="POST">
+        <form id="finishTournamentForm" method="POST">
             <input type="hidden" name="id" id="finishTournamentId"/>
 
             <div class="w100">Verify that the results are correct. You will not be able to make changes after submitting.</div>
@@ -143,6 +176,11 @@
     }
 
 
+    function openAddRoundModal(){
+        document.getElementById("addRoundModal").classList.add("show");
+    }
+
+
     function openFinishModal(){
         document.getElementById("finishTournamentId").value = tournament.id;
         document.getElementById("finishTournamentModal").classList.add("show");
@@ -171,6 +209,7 @@
         document.getElementById("editTournamentModal").classList.remove("show");
         document.getElementById("deleteTournamentModal").classList.remove("show");
         document.getElementById("startTournamentModal").classList.remove("show");
+        document.getElementById("addRoundModal").classList.remove("show");
         document.getElementById("finishTournamentModal").classList.remove("show");
     }
 
@@ -193,11 +232,17 @@
             closeModal();
         }
 
+        let addRoundModal = document.getElementById("addRoundModal");
+        let addRoundContent = document.querySelector("#addRoundModal .modal-content");
+        if(addRoundModal.classList.contains("show") && !addRoundContent.contains(event.target)){
+            closeModal();
+        }   
+
         let finishModal = document.getElementById("finishTournamentModal");
         let finishModalContent = document.querySelector("#finishTournamentModal .modal-content");
         if(finishModal.classList.contains("show") && !finishModalContent.contains(event.target)){
             closeModal();
-        }   
+        }  
     });
 </script>
 
@@ -251,6 +296,124 @@
                 closeModal();
                 alert("Tournament deleted succesfully.");
                 window.location.href = '/home/tournaments';
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Something went wrong.');
+        }
+    });
+    
+    
+    document.getElementById('startTournamentForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+
+        const id = formData.get('id');
+        const teams = formData.getAll('teams');
+    
+        try {
+            const res = await fetch('/home/tournaments/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, teams })
+            });
+    
+            const data = await res.json();
+    
+            if (!res.ok) {
+                alert(data.error);
+            } else {
+                closeModal();
+                window.location.reload();
+                alert("Tournament started succesfully.");
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Something went wrong.');
+        }
+    });
+    
+    
+    document.getElementById('addRoundForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+
+        const name = formData.get('name');
+        const amount = formData.get('amount');
+        const id = tournament.id;
+    
+        try {
+            const res = await fetch('/home/tournaments/rounds/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, name, amount })
+            });
+    
+            const data = await res.json();
+    
+            if (!res.ok) {
+                alert(data.error);
+            } else {
+                closeModal();
+                window.location.reload();
+                alert("Round added succesfully.");
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Something went wrong.');
+        }
+    });
+    
+    
+    async function deleteRound(event){
+    
+        const id = tournament.id;
+        const round_id = event.currentTarget.getAttribute('data-id');
+        console.log(event.currentTarget);
+    
+        try {
+            const res = await fetch('/home/tournaments/rounds/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, round_id })
+            });
+    
+            const data = await res.json();
+    
+            if (!res.ok) {
+                alert(data.error);
+            } else {
+                window.location.reload();
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Something went wrong.');
+        }
+    }
+    
+    
+    document.getElementById('finishTournamentForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+    
+        const id = document.getElementById("finishTournamentId").value;
+    
+        try {
+            const res = await fetch('/home/tournaments/finish', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+    
+            const data = await res.json();
+    
+            if (!res.ok) {
+                alert(data.error);
+            } else {
+                closeModal();
+                alert("Tournament finished succesfully.");
+                window.location.reload();
             }
         } catch (err) {
             console.error(err);

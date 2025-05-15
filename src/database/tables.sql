@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS players;
-DROP TABLE IF EXISTS participants;
 DROP TABLE IF EXISTS sets;
 DROP TABLE IF EXISTS games;
 DROP TABLE IF EXISTS rounds;
+DROP TABLE IF EXISTS participants;
 DROP TABLE IF EXISTS teams;
 DROP TABLE IF EXISTS tournaments;
 
@@ -50,10 +50,10 @@ CREATE TABLE games (
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     round_id BIGINT NOT NULL REFERENCES rounds(id) ON DELETE CASCADE,
-    par1_id BIGINT NOT NULL REFERENCES participants(id),
-    par2_id BIGINT NOT NULL REFERENCES participants(id),
-    winner_id BIGINT NOT NULL REFERENCES participants(id),
-    time TIME NOT NULL
+    par1_id BIGINT REFERENCES participants(id),
+    par2_id BIGINT REFERENCES participants(id),
+    winner_id BIGINT REFERENCES participants(id),
+    time TIME
 );
 
 CREATE TABLE sets (                 --store or calculate winner?
@@ -61,8 +61,8 @@ CREATE TABLE sets (                 --store or calculate winner?
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     game_id BIGINT NOT NULL REFERENCES games(id) ON DELETE CASCADE,
-    points1 INT NOT NULL,
-    points2 INT NOT NULL
+    points1 INT,
+    points2 INT
 );
 
 CREATE TABLE players (

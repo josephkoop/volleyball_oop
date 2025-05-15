@@ -16,7 +16,7 @@ import {
 } from "../controllers/teamController";
 
 import {
-    viewTournaments, viewEvent, createTournament, editTournament, deleteTournament, validateTournament
+    viewTournaments, viewEvent, createTournament, editTournament, deleteTournament, validateTournament, startTournament, finishTournament, addRound, deleteRound, addGame, saveRound
 } from "../controllers/tournamentController";
 
 const router = express.Router();
@@ -45,6 +45,12 @@ router.post('/home/tournaments/add', validateTournament, createTournament);
 router.get('/home/tournaments/:id', viewEvent);
 router.post('/home/tournaments/edit', validateTournament, editTournament);
 router.post('/home/tournaments/delete', deleteTournament);
+router.post('/home/tournaments/start', startTournament);
+router.post('/home/tournaments/finish', finishTournament);
+router.post('/home/tournaments/rounds/add', addRound);
+router.post('/home/tournaments/rounds/save', saveRound);
+router.post('/home/tournaments/rounds/delete', deleteRound);
+
 
 
 // Teams routes

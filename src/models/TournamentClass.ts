@@ -31,8 +31,8 @@ export class TournamentClass implements Tournament {
             SELECT 
                 t.id as tournament_id, t.name, t.venue, t.start_date, t.end_date, t.status, t.organizer, t.contact, t.description,
                 r.id as round_id, r.name as round_name,
-                g.id as game_id, g.round_id, g.par1_id, g.par2_id, g.winner_id, g.time,
-                s.id as set_id, s.points1, s.points2, s.game_id,
+                g.id as game_id, g.round_id as game_round_id, g.par1_id, g.par2_id, g.winner_id, g.time,
+                s.id as set_id, s.points1, s.points2, s.game_id as sets_game_id,
                 a.id as team1_id, a.name as team1_name,
                 b.id as team2_id, b.name as team2_name
             FROM tournaments t 
@@ -43,7 +43,8 @@ export class TournamentClass implements Tournament {
             LEFT JOIN participants p2 on g.par2_id = p2.id
             LEFT JOIN teams a on p1.team_id = a.id
             LEFT JOIN teams b on p2.team_id = b.id
-            WHERE t.id = $1;
+            WHERE t.id = $1
+            ORDER BY g.id;
         `, [id]);
         return result.rows;
     }
@@ -71,19 +72,106 @@ export class TournamentClass implements Tournament {
         return newTournament;
     }
 
-    async saveTournamentDB(): Promise<void>{
+    async saveTournamentDB(): Promise<any>{
       await query('INSERT INTO tournaments (name, venue, start_date, end_date, organizer, contact, status, description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;', [this.name, this.venue, this.start_date, this.end_date, this.organizer, this.contact, this.status, this.description]);
     }
     
     // Edit an existing tournament
-    async editTournamentDB(id: number, name: string, venue: string, start_date: Date, end_date: Date, organizer: string, contact: string, description: string): Promise<void> {
-      await query('UPDATE tournaments SET name = $1, venue = $2, start_date = $3, end_date = $4, organizer = $5, contact = $6, description = $7 WHERE id = $8 RETURNING *;', [name, venue, start_date, end_date, organizer, contact, description, id]);
+    async editTournamentDB(): Promise<any> {
+      await query('UPDATE tournaments SET name = $1, venue = $2, start_date = $3, end_date = $4, organizer = $5, contact = $6, description = $7 WHERE id = $8 RETURNING *;', [this.name, this.venue, this.start_date, this.end_date, this.organizer, this.contact, this.description, this.id]);
     }
     
       // Delete a tournament
-    async deleteTournamentDB(): Promise<void> {
-        await query('DELETE FROM tournaments WHERE id = $1 RETURNING *;', [this.id]);
+    async deleteTournamentDB(): Promise<any> {
+      await query('DELETE FROM tournaments WHERE id = $1 RETURNING *;', [this.id]);
     }    
+    
+    async updateTournamentDB(status: string): Promise<any> {
+      await query('UPDATE tournaments SET status = $1 WHERE id = $2 RETURNING *;', [status, this.id]);
+    } 
+    
+    async addParticipantDB(team_id: number): Promise<any> {
+      await query('INSERT INTO participants (tournament_id, team_id) VALUES ($1, $2)', [this.id, team_id]); 
+    }
+    
+    static async viewParticipantsDB(id: number): Promise<any> {
+      const result = await query('SELECT * FROM participants INNER JOIN teams ON participants.team_id = teams.id WHERE tournament_id = $1', [id]);
+      return result.rows;
+    }
+    
+    async addRoundDB(name: string): Promise<any> {
+      const result = await query('INSERT INTO rounds (tournament_id, name) VALUES ($1, $2) RETURNING *', [this.id, name])
+      return result.rows[0];
+    }    
+    
+    async saveRoundDB(): Promise<any> {
+      const result = await query('INSERT INTO rounds (tournament_id, name) VALUES ($1, $2) RETURNING *', [this.id, name])
+      return result.rows[0];
+    }    
+    
+    async deleteRoundDB(round_id: number): Promise<any> {
+      await query('DELETE FROM rounds WHERE id = $1 RETURNING *;', [round_id]);
+    }    
+    
+    async addGameDB(round_id: number): Promise<any> {
+      const result = await query('INSERT INTO games (round_id) VALUES ($1) RETURNING *', [round_id]);
+      return result.rows[0];
+    }    
+    
+    async editGameDB(game_id: number, par1: number, par2: number): Promise<any>{
+      const result = await query('UPDATE games SET par1_id = $1, par2_id = $2 WHERE id = $3 RETURNING *', [par1, par2, game_id]);
+      return result.rows[0];
+    }
+    
+    async deleteSetsDB(game_id: number): Promise<any>{
+      await query('DELETE from sets WHERE game_id = $1', [game_id]);
+    }
+    
+    async addSetDB(game_id: number, points1: number, points2: number): Promise<any>{
+      await query('INSERT INTO sets (game_id, points1, points2) VALUES ($1, $2, $3)', [game_id, points1, points2]);
+    }
+    
+    async finishTournamentDB(): Promise<any> {
+      const games = await query(`SELECT id FROM games WHERE round_id IN (SELECT id FROM rounds WHERE tournament_id = $1);`, [this.id]);
+
+      for (const game of games.rows) {
+        const game_id = game.id;
+
+        const setsResult = await query(`SELECT * FROM sets WHERE game_id = $1 ORDER BY id ASC`, [game_id]);
+        const sets = setsResult.rows;
+
+        if (sets.length < 2 || sets.length > 3) throw new Error(`Game ${game_id} does not have 2 or 3 sets.`);
+
+        let wins1 = 0;
+        let wins2 = 0;
+        let winner = 0;
+
+        for (let i = 0; i < sets.length; i++) {
+          const { points1, points2 } = sets[i];
+
+          if (i < 2) {
+            if (points1 >= 25 && points1 > points2) wins1++;
+            else if (points2 >= 25 && points2 > points1) wins2++;
+          } else {
+            if (points1 >= 15 && points1 > points2) wins1++;
+            else if (points2 >= 15 && points2 > points1) wins2++;
+          }
+        }
+
+        if (wins1 === 2 && wins2 < 2) winner = 1;
+        else if (wins2 === 2 && wins1 < 2) winner = 2;
+        else throw new Error(`Invalid score structure in game ${game_id}.`);
+
+        const gameData = await query(`SELECT par1_id, par2_id FROM games WHERE id = $1`, [game_id]);
+        const { par1_id, par2_id } = gameData.rows[0];
+
+        const winner_id = winner === 1 ? par1_id : par2_id;
+
+        await query(`UPDATE games SET winner_id = $1 WHERE id = $2`, [winner_id, game_id]);
+      }
+
+      await this.updateTournamentDB("Finished");
+    }  
 
 
 
@@ -127,13 +215,13 @@ export class TournamentClass implements Tournament {
 //     }
     
 //       // Edit a Round
-//     async editRoundDB(id: number, name: string, number: number, position: string, heightFeet: number, heightInches: number, age: number): Promise<void> {
+//     async editRoundDB(id: number, name: string, number: number, position: string, heightFeet: number, heightInches: number, age: number): Promise<any> {
 //       await query(`UPDATE Rounds SET name = $1, tournament_id = $2, number = $3, position = $4,
 //       height_feet = $5, height_inches = $6, age = $7 WHERE id = $8 RETURNING *;`, [name, this.id, number, position, heightFeet, heightInches, age, id]);
 //     }
     
 //       // Delete a Round
-//     async deleteRoundDB(id: number): Promise<void> {
+//     async deleteRoundDB(id: number): Promise<any> {
 //         await query('DELETE FROM Rounds WHERE id = $1 RETURNING *;', [id]);
 //     }
 // }

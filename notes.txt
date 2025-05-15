@@ -3,3 +3,15 @@ Store dates as dates only.
 
 Change edit functions to use class attributes instead of passing in data.
 Reset forms or leave them partially filled?
+
+making view participants a static function
+
+on the event page, since there is only one tournament, making the id a hidden input is pointless
+
+Safeguard against unsaved changes. Maybe send a notification after a waiting period?
+
+Validate set 3 and update the game winner when you finish the tournament.
+
+Change loop inserts into a single insert that inserts multiplie rows.
+
+Could delete null sets during finish.
