@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS players;
 DROP TABLE IF EXISTS sets;
 DROP TABLE IF EXISTS games;
@@ -5,6 +6,14 @@ DROP TABLE IF EXISTS rounds;
 DROP TABLE IF EXISTS participants;
 DROP TABLE IF EXISTS teams;
 DROP TABLE IF EXISTS tournaments;
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL CHECK (role IN ('user', 'admin', 'overall-admin')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE tournaments (
     id serial PRIMARY KEY,
