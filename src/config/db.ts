@@ -11,7 +11,7 @@ const pool = new Pool({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    port: process.env.DB_PORT,
+    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : undefined,
 });
 
 pool.on("connect", () => {
@@ -20,33 +20,22 @@ pool.on("connect", () => {
 
 const initializeDB = async () => {
     try {
-        await pool.query(`
-            CREATE TABLE IF NOT EXISTS users (
-                id SERIAL PRIMARY KEY,
-                username VARCHAR(100) UNIQUE NOT NULL,
-                password VARCHAR(255) NOT NULL,
-                role VARCHAR(20) NOT NULL CHECK (role IN ('user', 'admin', 'overall-admin')),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-        `);
-        console.log("Users table initialized");
-
         // Create default overall-admin if it doesn't exist
         const result = await pool.query("SELECT * FROM users WHERE username = $1", ['Admin']);
         if (result.rows.length === 0) {
             const hashedPassword = await bcrypt.hash("password", 10); // Hash the default password
             await pool.query(
                 "INSERT INTO users (username, password, role) VALUES ($1, $2, $3)",
-                ['Admin', hashedPassword, 'overall-admin']
+                ['Admin', hashedPassword, 'admin']
             );
-            console.log("Default overall-admin created.");
+            console.log("Default admin created.");
         }
     } catch (error) {
         console.error("Database initialization error:", error);
     }
 };
 
-const query = (text, params) => {
+const query = (text: string, params?: any[]) => {
     return pool.query(text, params);
 };
 

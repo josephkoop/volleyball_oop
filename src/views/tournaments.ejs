@@ -10,7 +10,7 @@
     <h2>Ongoing Tournaments</h2>
 
     <% ongoingTournaments.forEach(tournament => { %>
-        <a href="/home/tournaments/<%= tournament.id %>">
+        <a href="/tournaments/<%= tournament.id %>">
             <%- include('components/tournament-card', { tournament: tournament, status: false }) %>
         </a>
     <% }) %>
@@ -25,7 +25,7 @@
     <p>Finished Tournaments</p>
 
     <% finishedTournaments.forEach(tournament => { %>
-        <a href="/home/tournaments/<%= tournament.id %>">
+        <a href="/tournaments/<%= tournament.id %>">
             <%- include('components/tournament-card', { tournament: tournament, status: false }) %>
         </a>
     <% }) %>
@@ -35,7 +35,7 @@
     <p>Future Tournaments</p>
 
     <% futureTournaments.forEach(tournament => { %>
-        <a href="/home/tournaments/<%= tournament.id %>">
+        <a href="/tournaments/<%= tournament.id %>">
             <%- include('components/tournament-card', { tournament: tournament, status: false }) %>
         </a>
     <% }) %>
@@ -117,7 +117,7 @@
         const data1 = Object.fromEntries(formData.entries());
     
         try {
-            const res = await fetch('/home/tournaments/add', {
+            const res = await fetch('/tournaments/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: data1.name, venue: data1.venue, start_date: data1.start_date, end_date: data1.end_date, organizer: data1.organizer, contact: data1.contact, description: data1.description })

@@ -1,6 +1,6 @@
 // tournamentClass.ts
 import { Tournament } from "../interfaces/TournamentHeader";
-import { query } from '../config/db.js';
+import { query } from '../config/db';
 
 export class TournamentClass implements Tournament {
     constructor(
@@ -18,9 +18,9 @@ export class TournamentClass implements Tournament {
   
     // Get tournaments based on their status (Ongoing, Finished, or Future)
     static async selectTournamentsByStatusDB(): Promise<any> {
-        const future = await query(`SELECT * FROM tournaments WHERE status = 'Future' ORDER BY start_date DESC;`);
-        const ongoing = await query(`SELECT * FROM tournaments WHERE status = 'Ongoing' ORDER BY start_date DESC;`);
-        const finished = await query(`SELECT * FROM tournaments WHERE status = 'Finished' ORDER BY start_date DESC;`);
+        const future = await query(`SELECT * FROM tournaments WHERE status = 'Future' ORDER BY start_date DESC`);
+        const ongoing = await query(`SELECT * FROM tournaments WHERE status = 'Ongoing' ORDER BY start_date DESC`);
+        const finished = await query(`SELECT * FROM tournaments WHERE status = 'Finished' ORDER BY start_date DESC`);
         return { future: future.rows, ongoing: ongoing.rows, finished: finished.rows };
     }
 
@@ -149,57 +149,4 @@ export class TournamentClass implements Tournament {
     static async setGameWinnerDB(game_id: number, winner_id: number): Promise<any> {
       await query(`UPDATE games SET winner_id = $1 WHERE id = $2`, [winner_id, game_id]);
     }
-
-
-    
-    // Get Rounds for a specific tournament
-//     async viewRoundsDB(): Promise<RoundClass[] | null> {
-//       const result = await query(`SELECT Rounds.* FROM tournaments INNER JOIN Rounds ON tournaments.id = Rounds.tournament_id WHERE tournaments.id = $1;`, [this.id]);
-//       if(result.rows.length == 0) return null;
-
-//       return result.rows.map((row: any) => 
-//         new RoundClass(
-//           row.id,
-//           row.name,
-//           row.number,
-//           row.position,
-//           row.height_feet,
-//           row.height_inches,
-//           row.age,
-//         )
-//       );
-//     }
-
-//     // Get a specific Round
-//     static async getRoundDB(id: number) {
-//         const result = await query(`SELECT * FROM Rounds WHERE id = $1 LIMIT 1;`, [id]);
-//         if(result.rows.length == 0) return null;
-//         const row = result.rows[0];
-//         return new RoundClass(
-//           row.id,
-//           row.name,
-//           row.number,
-//           row.position,
-//           row.height_feet,
-//           row.height_inches,
-//           row.age,
-//         );
-//     }
-
-//     async saveRoundDB(newRound: Round){
-//       await query('INSERT INTO Rounds (name, tournament_id, number, position, height_feet, height_inches, age) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;', [newRound.name, this.id, newRound.number, newRound.position, newRound.heightFeet, newRound.heightInches, newRound.age]);
-//     }
-    
-//       // Edit a Round
-//     async editRoundDB(id: number, name: string, number: number, position: string, heightFeet: number, heightInches: number, age: number): Promise<any> {
-//       await query(`UPDATE Rounds SET name = $1, tournament_id = $2, number = $3, position = $4,
-//       height_feet = $5, height_inches = $6, age = $7 WHERE id = $8 RETURNING *;`, [name, this.id, number, position, heightFeet, heightInches, age, id]);
-//     }
-    
-//       // Delete a Round
-//     async deleteRoundDB(id: number): Promise<any> {
-//         await query('DELETE FROM Rounds WHERE id = $1 RETURNING *;', [id]);
-//     }
-// }
-
 }

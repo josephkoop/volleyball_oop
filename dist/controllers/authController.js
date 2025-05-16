@@ -100,15 +100,15 @@ const postAddAdmin = async (req, res) => {
     try {
         const result = await db_js_1.default.query("SELECT * FROM users WHERE username = $1", [username]);
         if (result.rows.length > 0) {
-            return res.redirect("/usermanagement?error=Username already exists");
+            return res.redirect("/users?error=Username already exists");
         }
         const hashedPassword = await bcrypt_1.default.hash(password, 10);
         await db_js_1.default.query("INSERT INTO users (username, password, role) VALUES ($1, $2, 'admin')", [username, hashedPassword]);
-        res.redirect("/usermanagement");
+        res.redirect("/users");
     }
     catch (error) {
         console.error(error);
-        res.redirect("/usermanagement?error=Failed to add admin");
+        res.redirect("/users?error=Failed to add admin");
     }
 };
 exports.postAddAdmin = postAddAdmin;
@@ -117,14 +117,14 @@ const postDeleteUser = async (req, res) => {
     const { userId } = req.body;
     try {
         if (req.session.user.role === 'overall-admin' && req.session.user.username === "Admin" && userId === req.session.user.id) {
-            return res.redirect("/usermanagement?error=You cannot delete the overall admin");
+            return res.redirect("/users?error=You cannot delete the overall admin");
         }
         await db_js_1.default.query("DELETE FROM users WHERE id = $1", [userId]);
-        res.redirect("/usermanagement");
+        res.redirect("/users");
     }
     catch (error) {
         console.error(error);
-        res.redirect("/usermanagement?error=Failed to delete user");
+        res.redirect("/users?error=Failed to delete user");
     }
 };
 exports.postDeleteUser = postDeleteUser;

@@ -1,6 +1,6 @@
 TRUNCATE TABLE tournaments, teams, rounds, games, sets, players, participants RESTART IDENTITY CASCADE;
 
-
+-- INSERT INTO users (username, password, role) VALUES ('Admin', 'password', 'admin'),
 
 -- Inserting data into the 'tournaments' table
 INSERT INTO tournaments (name, venue, start_date, end_date, organizer, contact, status, description)

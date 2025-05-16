@@ -101,7 +101,7 @@
                 console.log(id, parseInt(round_id, 10), parseInt(game_id, 10));
             
                 try {
-                    const res = await fetch('/home/tournaments/rounds/save', {
+                    const res = await fetch('/tournaments/rounds/save', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ id, round_id, game_id, par1, par2, points1_1, points2_1, points1_2, points2_2, points1_3, points2_3 })

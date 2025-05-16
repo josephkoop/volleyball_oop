@@ -1,5 +1,59 @@
 <%- include('components/header') %>
 
-<h1>Belize Volleyball Association</h1>
+<link rel="stylesheet" href="/welcome.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<div class="color-strip"></div>
+    
+    <header>
+        <div class="container">
+            <div class="logo">BVA</div>
+            <div class="tagline">Belize Volleyball Association</div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <div class="welcome-section">
+                <h1>Welcome to the Belize Volleyball Association</h1>
+                <p class="lead">Join our growing community of volleyball enthusiasts, players, and fans across Belize.</p>
+                
+                <div class="volleyball-container">
+                    <div class="volleyball">
+                        <div class="panel panel-1"></div>
+                        <div class="panel panel-2"></div>
+                        <div class="panel panel-3"></div>
+                        <div class="panel panel-4"></div>
+                        <div class="panel panel-5"></div>
+                        <div class="panel panel-6"></div>
+                    </div>
+                </div>
+                
+                <p>Choose an option below to get started:</p>
+                
+                <div class="auth-buttons">
+                    <a href="/login" class="btn btn-primary">Login</a>
+                    <a href="/signup" class="btn btn-secondary">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Belize Volleyball Association. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 <%- include('components/footer') %>

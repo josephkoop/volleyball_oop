@@ -9,16 +9,17 @@ DROP TABLE IF EXISTS tournaments;
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     username VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role VARCHAR(20) NOT NULL CHECK (role IN ('user', 'admin', 'overall-admin')),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    role VARCHAR(20) NOT NULL CHECK (role IN ('official', 'admin'))
 );
 
 CREATE TABLE tournaments (
     id serial PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     name VARCHAR(255) NOT NULL,
     venue VARCHAR(255) NOT NULL,
     start_date DATE NOT NULL,
@@ -31,8 +32,8 @@ CREATE TABLE tournaments (
 
 CREATE TABLE teams (
     id serial PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     name VARCHAR(255) NOT NULL,
     rank INT,
     location VARCHAR(255) NOT NULL
@@ -40,24 +41,24 @@ CREATE TABLE teams (
 
 CREATE TABLE participants (
     id serial PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     tournament_id BIGINT NOT NULL REFERENCES tournaments(id) ON DELETE CASCADE,
     team_id BIGINT NOT NULL REFERENCES teams(id)
 );
 
 CREATE TABLE rounds (
     id serial PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     tournament_id BIGINT NOT NULL REFERENCES tournaments(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE games (
     id serial PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     round_id BIGINT NOT NULL REFERENCES rounds(id) ON DELETE CASCADE,
     par1_id BIGINT REFERENCES participants(id),
     par2_id BIGINT REFERENCES participants(id),
@@ -67,8 +68,8 @@ CREATE TABLE games (
 
 CREATE TABLE sets (                 --store or calculate winner?
     id serial PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     game_id BIGINT NOT NULL REFERENCES games(id) ON DELETE CASCADE,
     points1 INT,
     points2 INT
@@ -76,8 +77,8 @@ CREATE TABLE sets (                 --store or calculate winner?
 
 CREATE TABLE players (
     id serial PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     team_id BIGINT NOT NULL REFERENCES teams(id),
     name VARCHAR(255) NOT NULL,
     number INT NULL,

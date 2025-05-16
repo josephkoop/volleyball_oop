@@ -3,7 +3,7 @@
 import { Team } from "../interfaces/TeamHeader";              //Explicitly throw errors?
 import { Player } from "../interfaces/PlayerHeader";          //Add image to player
 import { PlayerClass } from "./PlayerClass";
-import { query } from '../config/db.js';
+import { query } from '../config/db';
 
 export class TeamClass implements Team {
     constructor(

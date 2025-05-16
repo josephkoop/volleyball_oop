@@ -21,7 +21,7 @@
         <% if(teams != null){ %>
             <% teams.forEach(team => { %>
                 <li>
-                    <a class="teamRow" href="/home/teams/<%= team.id %>/players">
+                    <a class="teamRow" href="/teams/<%= team.id %>/players">
                         <p><%= team.rank %></p>
                         <p><%= team.name %></p>
                         <p><%= team.location %></p>
@@ -45,7 +45,7 @@
     
     <div id="addTeamModal" class="modal">
         <div class="modal-content">
-            <form id=addTeamForm action="/home/teams/add" method="POST">            <!-- csrf for production -->
+            <form id=addTeamForm action="/teams/add" method="POST">            <!-- csrf for production -->
                 <!-- <input type="hidden" name="form_type"/> -->
 
                 <div>
@@ -72,7 +72,7 @@
 
     <div id="editTeamModal" class="modal">
         <div class="modal-content">
-            <form id="editTeamForm" action="/home/teams/edit" method="POST">
+            <form id="editTeamForm" action="/teams/edit" method="POST">
 
                 <!-- <input type="hidden" name="form_type" value="edit"/> -->
 
@@ -102,7 +102,7 @@
 
     <div id="deleteTeamModal" class="modal">
         <div class="modal-content">
-            <form id="deleteTeamForm" action="/home/teams/delete" method="POST">
+            <form id="deleteTeamForm" action="/teams/delete" method="POST">
                 <input type="hidden" name="id" id="deleteTeamId"/>
 
                 <p>Check Javascript</p>
@@ -180,7 +180,7 @@
         const location = form.location.value;
     
         try {
-            const res = await fetch('/home/teams/add', {
+            const res = await fetch('/teams/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, rank, location })
@@ -212,7 +212,7 @@
         const location = form.location.value;
     
         try {
-            const res = await fetch('/home/teams/edit', {
+            const res = await fetch('/teams/edit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id, name, rank, location })
@@ -240,7 +240,7 @@
         const id = document.getElementById("deleteTeamId").value;
     
         try {
-            const res = await fetch('/home/teams/delete', {
+            const res = await fetch('/teams/delete', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id })

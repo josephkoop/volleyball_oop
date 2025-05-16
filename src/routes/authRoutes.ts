@@ -9,7 +9,7 @@ import {
     getUserManagement,
     postAddAdmin,
     postDeleteUser
-} from "../controllers/authController.js";
+} from "../controllers/userController.js";
 
 const router = Router();
 
@@ -21,8 +21,8 @@ router.get("/logout", logout);
 
 router.get("/dashboard", getDashboard);
 
-router.get("/usermanagement", getUserManagement);  // User management route
-router.post("/usermanagement/add-admin", postAddAdmin);  // Add admin
-router.post("/usermanagement/delete-user", postDeleteUser);  // Delete user (admin or regular)
+router.get("/users", getUserManagement);  // User management route
+router.post("/users/add-admin", postAddAdmin);  // Add admin
+router.post("/users/delete-user", postDeleteUser);  // Delete user (admin or regular)
 
 export default router;

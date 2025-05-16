@@ -125,7 +125,7 @@ export const createPlayer = async(req: Request, res: Response): Promise<void> =>
             team.savePlayerDB(newPlayer);  
         }
 
-        res.redirect(`/home/teams/${teamId}/players`)           //.flash('success', 'Player Added');
+        res.redirect(`/teams/${teamId}/players`)           //.flash('success', 'Player Added');
     } catch (error) {
         console.error('Controller createPlayer error: ', error);
         res.status(500).json({ err: 'An error occured.' });
@@ -142,7 +142,7 @@ export const editPlayer = async(req: Request, res: Response): Promise<void> => {
         if(team){
             await team.editPlayerDB(parseInt(id, 10), name, number, position, heightFeet, heightInches, age);
         }
-        res.redirect(`/home/teams/${teamId}/players`)           //.flash('success', 'Player Updated');
+        res.redirect(`/teams/${teamId}/players`)           //.flash('success', 'Player Updated');
     } catch (error) {
         console.error('Controller editPlayer error: ', error);
         res.status(500).json({ err: 'An error occured.' });
@@ -158,7 +158,7 @@ export const deletePlayer = async(req: Request, res: Response): Promise<void> =>
         if(team){
             await team.deletePlayerDB(parseInt(id, 10));
         }
-        res.redirect(`/home/teams/${teamId}/players`)           //.flash('success', 'Player Deleted');
+        res.redirect(`/teams/${teamId}/players`)           //.flash('success', 'Player Deleted');
     } catch (error) {
         console.error('Controller deletePlayer error: ', error);
         res.status(500).json({ err: 'An error occured.' });

@@ -12,7 +12,7 @@ router.get("/signup", authController_js_1.getSignup);
 router.post("/signup", authController_js_1.postSignup);
 router.get("/logout", authController_js_1.logout);
 router.get("/dashboard", authController_js_1.getDashboard);
-router.get("/usermanagement", authController_js_1.getUserManagement); // User management route
-router.post("/usermanagement/add-admin", authController_js_1.postAddAdmin); // Add admin
-router.post("/usermanagement/delete-user", authController_js_1.postDeleteUser); // Delete user (admin or regular)
+router.get("/users", authController_js_1.getUserManagement); // User management route
+router.post("/users/add-admin", authController_js_1.postAddAdmin); // Add admin
+router.post("/users/delete-user", authController_js_1.postDeleteUser); // Delete user (admin or regular)
 exports.default = router;

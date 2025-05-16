@@ -3,7 +3,7 @@
 <h2 class="page_heading"><%= team.name %></h2>
 
 <div class="flex-heading-buttons">
-    <button class="button" onclick="window.location.href='/home/teams'">Back</button>
+    <button class="button" onclick="window.location.href='/teams'">Back</button>
     <div>
         <p class="center">Rank: <%= team.rank %></p>
         <p class="center"><%= team.location %></p>
@@ -26,7 +26,7 @@
 <!-- Add Player Modal -->
 <div id="addPlayerModal" class="modal">
     <div class="modal-content">
-        <form id="addPlayerForm" action="/home/teams/<%= team.id %>/players/add" method="POST">
+        <form id="addPlayerForm" action="/teams/<%= team.id %>/players/add" method="POST">
             <!-- <input type="hidden" name="form_type" value="add"/> -->
             <input type="hidden" name="team_id" value="<%= team.id %>">
 
@@ -70,7 +70,7 @@
 <!-- Edit Player Modal -->
 <div id="editPlayerModal" class="modal">
     <div class="modal-content">
-        <form id="editPlayerForm" action="/home/teams/<%= team.id %>/players/edit" method="POST">
+        <form id="editPlayerForm" action="/teams/<%= team.id %>/players/edit" method="POST">
             <input type="hidden" name="_method" value="PUT">
             <!-- <input type="hidden" name="form_type" value="edit"/> -->
             <input type="hidden" name="id" id="editPlayerId"/>
@@ -128,7 +128,7 @@
 <!-- Delete Player Modal -->
 <div id="deletePlayerModal" class="modal">
     <div class="modal-content">
-        <form id="deletePlayerForm" action="/home/teams/<%= team.id %>/players/delete" method="POST">
+        <form id="deletePlayerForm" action="/teams/<%= team.id %>/players/delete" method="POST">
             <input type="hidden" name="id" id="deletePlayerId"/>
             <!-- <input type="hidden" name="_method" value="DELETE"> -->
             <p>Check Javascript</p>

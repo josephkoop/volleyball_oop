@@ -3,9 +3,11 @@ import "express-session";
 
 declare module "express-session" {
   interface SessionData {
+    successMessage?: string | null;
     user?: {
       id: number;
-      name: string;
+      username: string;
+      role: string;
       // Add more fields as needed
     };
   }

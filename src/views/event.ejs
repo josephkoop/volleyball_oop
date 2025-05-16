@@ -2,7 +2,7 @@
 <br>
 
 <div class="flex-heading-buttons">
-    <button class="button" onclick="window.location.href='/home/tournaments'">Back</button>
+    <button class="button" onclick="window.location.href='/tournaments'">Back</button>
     <button onclick="event.preventDefault(); event.stopPropagation(); openEditModal(event)" id="editTournamentButton" class="button">Edit Tournament</button>
     <button onclick="event.preventDefault(); event.stopPropagation(); openDeleteModal(event)" id="deleteTournamentButton" class="button">Delete Tournament</button>
     <% if (tournament.status == 'Future'){ %>
@@ -255,7 +255,7 @@
         const data1 = Object.fromEntries(formData.entries());
     
         try {
-            const res = await fetch('/home/tournaments/edit', {
+            const res = await fetch('/tournaments/edit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id: data1.id, name: data1.name, venue: data1.venue, start_date: data1.start_date, end_date: data1.end_date, organizer: data1.organizer, contact: data1.contact, description: data1.description })
@@ -283,7 +283,7 @@
         const id = document.getElementById("deleteTournamentId").value;
     
         try {
-            const res = await fetch('/home/tournaments/delete', {
+            const res = await fetch('/tournaments/delete', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id })
@@ -296,7 +296,7 @@
             } else {
                 closeModal();
                 alert("Tournament deleted succesfully.");
-                window.location.href = '/home/tournaments';
+                window.location.href = '/tournaments';
             }
         } catch (err) {
             console.error(err);
@@ -314,7 +314,7 @@
         const teams = formData.getAll('teams');
     
         try {
-            const res = await fetch('/home/tournaments/start', {
+            const res = await fetch('/tournaments/start', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id, teams })
@@ -346,7 +346,7 @@
         const id = tournament.id;
     
         try {
-            const res = await fetch('/home/tournaments/rounds/add', {
+            const res = await fetch('/tournaments/rounds/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id, name, amount })
@@ -380,7 +380,7 @@
         console.log(event.currentTarget);
     
         try {
-            const res = await fetch('/home/tournaments/rounds/delete', {
+            const res = await fetch('/tournaments/rounds/delete', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id, round_id })
@@ -408,7 +408,7 @@
         const id = document.getElementById("finishTournamentId").value;
     
         try {
-            const res = await fetch('/home/tournaments/finish', {
+            const res = await fetch('/tournaments/finish', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id })

@@ -21,3 +21,5 @@ Catch null error before model.
 Add which game to the error message.
 
 Bug in checking for 2 or 3 sets (or in saving games).
+
+Force status to be one of three valid types (like Chat did for Users)
