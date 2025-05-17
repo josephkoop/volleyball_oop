@@ -23,7 +23,13 @@ export class UserClass {
         return new UserClass(result.rows[0]);
     }
 
-    static async create(username: string, password: string, role: string = 'user'): Promise<void> {
+    static async findById(id: number): Promise<UserClass | null> {
+        const result = await query("SELECT * FROM users WHERE id = $1", [id]);
+        if (result.rows.length === 0) return null;
+        return new UserClass(result.rows[0]);
+    }
+
+    static async create(username: string, password: string, role: string = 'official'): Promise<void> {
         const hashedPassword = await bcrypt.hash(password, 10);
         await query(
             "INSERT INTO users (username, password, role) VALUES ($1, $2, $3)",
@@ -32,7 +38,7 @@ export class UserClass {
     }
 
     static async getAllExceptOverallAdmin(): Promise<UserClass[]> {
-        const result = await query("SELECT id, username, role FROM users WHERE role != 'overall-admin'");
+        const result = await query("SELECT id, username, role FROM users WHERE role != 'admin'");
         return result.rows.map((row: any) => new UserClass(row));
     }
 

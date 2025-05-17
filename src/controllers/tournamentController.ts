@@ -158,7 +158,7 @@ export const createTournament = async(req: Request, res: Response): Promise<any>
             "Future",
             description
         );
-        newTournament.saveTournamentDB();
+        await newTournament.saveTournamentDB();
         res.status(201).json({ message: 'Tournament added successfully', tournament: newTournament });
     }catch(error){
         console.error('Controller createTournament error: ', error);
@@ -171,23 +171,20 @@ export const editTournament = async(req: Request, res: Response): Promise<any> =
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-    const { id, name, venue, start_date, end_date, organizer, contact, status, description } = req.body;
+    const { id, name, venue, start_date, end_date, organizer, contact, status, description } = req.body;            //Don't need status
     try {
-        let tournament = await TournamentClass.getTournamentDB(parseInt(id, 10));
+        const tournament = await TournamentClass.getTournamentDB(parseInt(id, 10));
         if (!tournament) return res.status(404).json({ error: 'Tournament not found' });
 
-        const newTournament = new TournamentClass(
-            parseInt(id, 10),
-            name,
-            venue,
-            start_date,
-            end_date,
-            organizer,
-            contact,
-            status,
-            description
-        );
-        let updatedTournament = await newTournament.editTournamentDB();
+        tournament.name = name;
+        tournament.venue = venue;
+        tournament.start_date = start_date;
+        tournament.end_date = end_date;
+        tournament.organizer = organizer;
+        tournament.contact = contact;
+        tournament.description = description;
+        const updatedTournament = await tournament.editTournamentDB();
+
         res.status(201).json({ message: 'Tournament updated successfully', tournament: updatedTournament });
     } catch (error) {
         console.error('Controller editTournament error: ', error);
@@ -332,8 +329,6 @@ export const saveRound = async(req: Request, res: Response): Promise<any> => {
             }
         }
     }
-
-    //Validate Set 3
 
 
     if(!id || !round_id || !game_id){       //Also check if round and game are in database

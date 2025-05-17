@@ -89,8 +89,10 @@ export const postAddAdmin = async (req: Request, res: Response) => {
 export const postDeleteUser = async (req: Request, res: Response) => {
     const { userId } = req.body;
 
+    const findUser = await UserClass.findById(userId);
+
     try {
-        if (!req.session.user || req.session.user.role === 'admin') {
+        if (!req.session.user || !findUser || findUser.role === 'admin') {
             return res.redirect("/users?error=You cannot delete an admin");
         }
 

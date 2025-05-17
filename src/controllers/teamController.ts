@@ -81,14 +81,18 @@ export const editTeam = async (req: Request, res: Response): Promise<any> => {
       const team = await TeamClass.getTeamDB(parseInt(id, 10));
       if (!team) return res.status(404).json({ error: 'Team not found' });
   
-      await team.editTeamDB(parseInt(id, 10), name, location, rank);
+      team.name = name;
+      team.location = location;
+      team.rank = rank;
+      await team.editTeamDB();
+      
       res.status(200).json({ message: 'Team updated successfully' });
     } catch (error) {
       console.error('editTeam error:', error);
       res.status(500).json({ error: 'An error occured.' });
     }
 };
-  
+
   // Delete
   export const deleteTeam = async (req: Request, res: Response): Promise<any> => {
     const { id } = req.body;

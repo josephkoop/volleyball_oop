@@ -9,7 +9,7 @@ export interface Team {
     location: string
 
     saveTeamDB(newTeam: Team): void;
-    editTeamDB(id: number, name: string, location: string, rank: number): void;
+    editTeamDB(): void;
     deleteTeamDB(): void;
 
     viewPlayersDB(): void;

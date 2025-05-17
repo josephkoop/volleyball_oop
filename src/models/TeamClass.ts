@@ -38,8 +38,8 @@ export class TeamClass implements Team {
     }
     
       // Edit an existing team
-    async editTeamDB(id: number, name: string, location: string, rank: number): Promise<void> {     //We could first update the object, then call edit using this.property instead of passing in the properties.
-      await query('UPDATE teams SET name = $1, location = $2, rank = $3 WHERE id = $4 RETURNING *;', [name, location, rank, id]);
+    async editTeamDB(): Promise<void> {
+      await query('UPDATE teams SET name = $1, location = $2, rank = $3 WHERE id = $4 RETURNING *;', [this.name, this.location, this.rank, this.id]);
     }
     
       // Delete a team
