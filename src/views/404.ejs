@@ -1,5 +1,39 @@
 <%- include('components/header') %>
 
-    <h1>Oops! Page not found.</h1>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="404.css">
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <div class="color-strip"></div>
+    
+    <header>
+        <div class="container">
+            <div class="logo">BVA</div>
+            <div class="tagline">Belize Volleyball Association</div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container error-container">
+            <h1>Oops! Page not found.</h1>
+            <p class="error-message">The page you're looking for doesn't exist or has been moved.</p>
+            <a href="/" class="btn btn-primary">Return to Homepage</a>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Belize Volleyball Association. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
 
 <%- include('components/footer') %>

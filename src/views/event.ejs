@@ -1,163 +1,339 @@
 <%- include('components/header') %>
-<br>
 
-<div class="flex-heading-buttons">
-    <button class="button" onclick="window.location.href='/tournaments'">Back</button>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="/event.css">
 
-    <% if (user) { %>
-        <button onclick="event.preventDefault(); event.stopPropagation(); openEditModal(event)" id="editTournamentButton" class="button">Edit Tournament</button>
-        <button onclick="event.preventDefault(); event.stopPropagation(); openDeleteModal(event)" id="deleteTournamentButton" class="button">Delete Tournament</button>
-        <% if (tournament.status == 'Future'){ %>
-            <button onclick="event.preventDefault(); event.stopPropagation(); openStartModal(event)" id="startTournamentButton" class="button">Start Tournament</button>
-        <% } else if(tournament.status == 'Ongoing'){ %>
-            <button onclick="event.preventDefault(); event.stopPropagation(); openFinishModal(event)" id="finishTournamentButton" class="button">Finish Tournament</button>
-        <% } %>
+<div class="color-strip"></div>
+
+<main class="container tournament-page">
+    <!-- Tournament Header Section -->
+    <section class="tournament-header">
+        <div class="breadcrumb-nav">
+            <a href="/tournaments" class="breadcrumb-link">Tournaments</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current"><%= tournament.name %></span>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="window.location.href='/tournaments'">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+
+            <% if (user) { %>
+                <button onclick="openEditModal(event)" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button onclick="openDeleteModal(event)" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+                <% if (tournament.status == 'Future'){ %>
+                    <button onclick="openStartModal(event)" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Start
+                    </button>
+                <% } else if(tournament.status == 'Ongoing'){ %>
+                    <button onclick="openFinishModal(event)" class="btn btn-primary">
+                        <i class="fas fa-flag-checkered"></i> Finish
+                    </button>
+                <% } %>
+            <% } %>
+        </div>
+    </section>
+
+    <!-- Main Tournament Card -->
+    <section class="tournament-card-section">
+        <div class="welcome-section">
+            <h1><%= tournament.name %></h1>
+            <div class="tournament-details">
+                <p><i class="fas fa-map-marker-alt"></i> <%= tournament.venue %></p>
+                <p><i class="fas fa-calendar-alt"></i> <%= new Date(tournament.start_date).toLocaleDateString() %> - <%= new Date(tournament.end_date).toLocaleDateString() %></p>
+                <p><i class="fas fa-user-tie"></i> <%= tournament.organizer %></p>
+                <p><i class="fas fa-phone"></i> <%= tournament.contact %></p>
+                <p class="tournament-description"><%= tournament.description %></p>
+                <div class="tournament-status <%= tournament.status.toLowerCase() %>">
+                    Status: <%= tournament.status %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Participants Section -->
+    <% if(tournament.status == 'Ongoing'){ %>
+        <section class="participants-section">
+            <h2 class="section-title">
+                <i class="fas fa-users"></i> Participants
+                <span class="badge"><%= participants.length %></span>
+            </h2>
+            <div class="participants-grid">
+                <% participants.forEach(par => { %>
+                    <div class="participant-card">
+                        <div class="participant-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="participant-name"><%= par.name %></div>
+                    </div>
+                <% }) %>
+            </div>
+        </section>
     <% } %>
-</div>
 
-<%- include('components/tournament-card', { tournament: tournament, status: true }) %>
-
-<% if(tournament.status == 'Ongoing'){ %>
-    <div class="tournament_card">
-        <h3>Participants: </h3>
-        <ul>
-            <% participants.forEach(par => { %>
-                <li><%= par.name %></li>
-            <% }) %>
-        </ul>
+    <!-- Rounds Management Section -->
+    <section class="rounds-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-list-ol"></i> Tournament Rounds
+                <span class="badge"><%= tournament.rounds ? tournament.rounds.length : 0 %></span>
+            </h2>
             
-    </div>
-<% } %>
+            <% if (user) { %>
+                <div class="rounds-actions">
+                    <button onclick="openAddRoundModal(event)" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Round
+                    </button>
+                    <button onclick="saveAllRounds()" class="btn btn-secondary">
+                        <i class="fas fa-save"></i> Save All
+                    </button>
+                </div>
+            <% } %>
+        </div>
 
-<% if (user) { %>
-    <button onclick="event.preventDefault(); event.stopPropagation(); openAddRoundModal(event)" id="addRoundButton" class="button">Add Round</button>
-    <button onclick="event.preventDefault(); event.stopPropagation(); saveAllRounds()" id="saveAllRoundsButton" class="button">Save All</button>
-<% } %>
+        <div class="rounds-container">
+            <% if (tournament.rounds && tournament.rounds.length > 0) { %>
+                <% tournament.rounds.forEach((round, index) => { %>
+                    <div class="round-card welcome-section">
+                        <h3><%= round.name %></h3>
+                        <div class="games-container">
+                            <% round.games.forEach((game, gameIndex) => { %>
+                                <div class="game-card">
+                                    <form class="game-form">
+                                        <input type="hidden" name="round_id" value="<%= round._id %>">
+                                        <input type="hidden" name="game_id" value="<%= game._id %>">
+                                        <div class="teams">
+                                            <select name="team1" class="team-select">
+                                                <% participants.forEach(team => { %>
+                                                    <option value="<%= team._id %>" <%= game.team1 == team._id ? 'selected' : '' %>><%= team.name %></option>
+                                                <% }) %>
+                                            </select>
+                                            <span class="vs">vs</span>
+                                            <select name="team2" class="team-select">
+                                                <% participants.forEach(team => { %>
+                                                    <option value="<%= team._id %>" <%= game.team2 == team._id ? 'selected' : '' %>><%= team.name %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+                                        <div class="scores">
+                                            <input type="number" name="score1" value="<%= game.score1 || 0 %>" min="0">
+                                            <span>-</span>
+                                            <input type="number" name="score2" value="<%= game.score2 || 0 %>" min="0">
+                                        </div>
+                                        <div class="game-time">
+                                            <input type="datetime-local" name="game_time" value="<%= game.game_time ? new Date(game.game_time).toISOString().slice(0,16) : '' %>">
+                                        </div>
+                                    </form>
+                                </div>
+                            <% }) %>
+                        </div>
+                        <% if (user) { %>
+                            <button class="btn btn-danger" onclick="deleteRound(event)" data-id="<%= round._id %>">
+                                <i class="fas fa-trash"></i> Delete Round
+                            </button>
+                        <% } %>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="empty-state">
+                    <i class="fas fa-volleyball-ball"></i>
+                    <h3>No Rounds Yet</h3>
+                    <p>This tournament doesn't have any rounds scheduled yet.</p>
+                    <% if (user) { %>
+                        <button onclick="openAddRoundModal(event)" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add First Round
+                        </button>
+                    <% } %>
+                </div>
+            <% } %>
+        </div>
+    </section>
+</main>
 
-<div class="round_card_container">    
-    <% if (tournament.rounds && tournament.rounds.length > 0) { %>
-        <% tournament.rounds.forEach((round, index) => { %>
-            <%- include('components/round-card', { round: round, tournament: tournament, participants: participants, index: index}) %>
-        <% }) %>
-    <% } else { %>
-        <p>No rounds available for this tournament.</p>
-    <% } %>
-</div>
-
+<!-- Edit Tournament Modal -->
 <div id="editTournamentModal" class="modal">
     <div class="modal-content">
+        <div class="modal-header">
+            <h3>Edit Tournament</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
         <form id="editTournamentForm" method="POST">
-
             <input type="hidden" name="id" id="editTournamentId"/>
 
-            <div>
-                <label for="name">Name: </label>
-                <input type="text" name="name" id="editTournamentName"/>
+            <div class="form-group">
+                <label for="editTournamentName">Name</label>
+                <input type="text" name="name" id="editTournamentName" required/>
             </div>
-            <div>
-                <label for="venue">Venue: </label>
-                <input type="string" name="venue" id="editTournamentVenue"/>
-            </div>
-            <div>
-                <label for="start_date">Start Date: </label>
-                <input type="date" name="start_date" id="editTournamentStartDate"/>           
-            </div>
-            <div>
-                <label for="end_date">End Date: </label>
-                <input type="date" name="end_date" id="editTournamentEndDate"/>
-            </div>              
-            <div>
-                <label for="organizer">Organizer: </label>
-                <input type="string" name="organizer" id="editTournamentOrganizer"/>
-            </div>              
-            <div>
-                <label for="contact">Contact Number: </label>
-                <input type="string" name="contact" id="editTournamentContact"/>
-            </div>            
-            <div>
-                <label for="description">Description: </label>
-                <textarea type="string" name="description" id="editTournamentDescription"></textarea>
-            </div>              
-            <div class="form-button">
-                <button class="button" type="submit">Update</button>
-                <button class="button" type="button" onclick="closeModal()">Cancel</button>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editTournamentVenue">Venue</label>
+                    <input type="text" name="venue" id="editTournamentVenue" required/>
+                </div>
+                <div class="form-group">
+                    <label for="editTournamentOrganizer">Organizer</label>
+                    <input type="text" name="organizer" id="editTournamentOrganizer" required/>
+                </div>
             </div>
 
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editTournamentStartDate">Start Date</label>
+                    <input type="date" name="start_date" id="editTournamentStartDate" required/>           
+                </div>
+                <div class="form-group">
+                    <label for="editTournamentEndDate">End Date</label>
+                    <input type="date" name="end_date" id="editTournamentEndDate" required/>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editTournamentContact">Contact Number</label>
+                    <input type="tel" name="contact" id="editTournamentContact" required/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="editTournamentDescription">Description</label>
+                <textarea name="description" id="editTournamentDescription" rows="4"></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update Tournament</button>
+            </div>
         </form>
     </div>
 </div>
 
-
-
+<!-- Delete Tournament Modal -->
 <div id="deleteTournamentModal" class="modal">
     <div class="modal-content">
+        <div class="modal-header">
+            <h3>Delete Tournament</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
         <form id="deleteTournamentForm" method="POST">
             <input type="hidden" name="id" id="deleteTournamentId"/>
 
-            <p>Check Javascript</p>
-            <div class="form-button">
-                <button class="button" type="submit">Delete</button>
-                <button class="button" type="button" onclick="closeModal()">Cancel</button>
+            <div class="modal-body">
+                <div class="warning-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Are you sure you want to delete <strong><%= tournament.name %></strong>? This action cannot be undone.</p>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn btn-danger">Delete Tournament</button>
             </div>
         </form>
     </div>
 </div>
 
-
-
+<!-- Start Tournament Modal -->
 <div id="startTournamentModal" class="modal">
     <div class="modal-content">
+        <div class="modal-header">
+            <h3>Start Tournament</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
         <form id="startTournamentForm" method="POST">
             <input type="hidden" name="id" id="startTournamentId"/>
 
-            <div class="w100">Select the teams competing in the tournament.</div>
-            <% teams.forEach(team => { %>
-                <div><label for="teams"><%= team.name %></label><input name="teams" value="<%= team.id %>" type="checkbox"></div>
-            <% }); %>
+            <div class="modal-body">
+                <p>Select the teams competing in <strong><%= tournament.name %></strong>:</p>
+                
+                <div class="teams-selection">
+                    <% teams.forEach(team => { %>
+                        <label class="team-checkbox">
+                            <input type="checkbox" name="teams" value="<%= team.id %>">
+                            <span class="checkmark"></span>
+                            <span class="team-name"><%= team.name %></span>
+                        </label>
+                    <% }); %>
+                </div>
+            </div>
 
-            <div class="form-button">
-                <button class="button" type="submit">Start</button>
-                <button class="button" type="button" onclick="closeModal()">Cancel</button>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Start Tournament</button>
             </div>
         </form>
     </div>
 </div>
 
-
-
+<!-- Add Round Modal -->
 <div id="addRoundModal" class="modal">
     <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add New Round</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
         <form id="addRoundForm" method="POST">
-            <label for="name">Name: </label>
-            <input type="text" name="name">
+            <div class="form-group">
+                <label for="roundName">Round Name</label>
+                <input type="text" name="name" id="roundName" placeholder="e.g., Quarter Finals" required>
+            </div>
 
-            <label for="amount">Number of games: </label>
-            <input type="number" name="amount">
+            <div class="form-group">
+                <label for="gameAmount">Number of Games</label>
+                <input type="number" name="amount" id="gameAmount" min="1" value="1" required>
+            </div>
 
-            <div class="form-button">
-                <button class="button" type="submit">Add</button>
-                <button class="button" type="button" onclick="closeModal()">Cancel</button>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Round</button>
             </div>
         </form>
     </div>
 </div>
 
-
-
+<!-- Finish Tournament Modal -->
 <div id="finishTournamentModal" class="modal">
     <div class="modal-content">
+        <div class="modal-header">
+            <h3>Finish Tournament</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
         <form id="finishTournamentForm" method="POST">
             <input type="hidden" name="id" id="finishTournamentId"/>
 
-            <div class="w100">Verify that the results are correct. You will not be able to make changes after submitting.</div>
+            <div class="modal-body">
+                <div class="confirmation-message">
+                    <i class="fas fa-check-circle"></i>
+                    <p>You are about to finish <strong><%= tournament.name %></strong>. Please verify all results are correct as you won't be able to make changes after submission.</p>
+                </div>
+            </div>
 
-            <div class="form-button">
-                <button class="button" type="submit">Finish</button>
-                <button class="button" type="button" onclick="closeModal()">Cancel</button>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Finish Tournament</button>
             </div>
         </form>
     </div>
 </div>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2025 Belize Volleyball Association. All rights reserved.</p>
+        <div class="social-links">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+    </div>
+</footer>
 
 
 <script>
