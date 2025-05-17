@@ -1,11 +1,11 @@
-//UserClass.ts
-
+// models/UserClass.ts
 import { User } from "../interfaces/UserHeader";
 import bcrypt from "bcrypt";
 import { query } from '../config/db';
+import { createUserInstance } from "./UserFactory";
 
-export class UserClass {
-    id?: number;
+export class UserClass implements User {
+    id: number;
     username: string;
     password: string;
     role: 'official' | 'admin';
@@ -20,26 +20,18 @@ export class UserClass {
     static async findByUsername(username: string): Promise<UserClass | null> {
         const result = await query("SELECT * FROM users WHERE username = $1", [username]);
         if (result.rows.length === 0) return null;
-        return new UserClass(result.rows[0]);
+        return await createUserInstance(result.rows[0]);
     }
 
-    static async findById(id: number): Promise<UserClass | null> {
-        const result = await query("SELECT * FROM users WHERE id = $1", [id]);
-        if (result.rows.length === 0) return null;
-        return new UserClass(result.rows[0]);
+    static async getAllExceptOverallAdmin(): Promise<UserClass[]> {
+        const result = await query("SELECT id, username, password, role FROM users WHERE role != 'overall-admin'");
+        const instances = await Promise.all(result.rows.map(row => createUserInstance(row)));
+        return instances;
     }
 
     static async create(username: string, password: string, role: string = 'official'): Promise<void> {
         const hashedPassword = await bcrypt.hash(password, 10);
-        await query(
-            "INSERT INTO users (username, password, role) VALUES ($1, $2, $3)",
-            [username, hashedPassword, role]
-        );
-    }
-
-    static async getAllExceptOverallAdmin(): Promise<UserClass[]> {
-        const result = await query("SELECT id, username, role FROM users WHERE role != 'admin'");
-        return result.rows.map((row: any) => new UserClass(row));
+        await query("INSERT INTO users (username, password, role) VALUES ($1, $2, $3)", [username, hashedPassword, role]);
     }
 
     static async deleteById(id: number): Promise<void> {
@@ -48,5 +40,9 @@ export class UserClass {
 
     async comparePassword(plainPassword: string): Promise<boolean> {
         return await bcrypt.compare(plainPassword, this.password);
+    }
+
+    canDeleteUsers(): boolean {
+        return false;
     }
 }

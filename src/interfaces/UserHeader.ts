@@ -1,4 +1,4 @@
-//UserHeader.ts
+// interfaces/UserHeader.ts
 
 export interface User {
     id: number;
@@ -6,5 +6,6 @@ export interface User {
     password: string;
     role: 'official' | 'admin';
 
-    comparePassword(plainPassword: string): boolean;
+    comparePassword(plainPassword: string): Promise<boolean>;
+    canDeleteUsers(): boolean;
 }

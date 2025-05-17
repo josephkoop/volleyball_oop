@@ -1,5 +1,4 @@
-//userController.ts
-
+// controllers/userController.ts
 import { Request, Response } from "express";
 import { UserClass } from "../models/UserClass";
 
@@ -89,11 +88,11 @@ export const postAddAdmin = async (req: Request, res: Response) => {
 export const postDeleteUser = async (req: Request, res: Response) => {
     const { userId } = req.body;
 
-    const findUser = await UserClass.findById(userId);
-
+    if(!req.session.user){ return res.redirect("/users?error=Failed to delete user"); }
     try {
-        if (!req.session.user || !findUser || findUser.role === 'admin') {
-            return res.redirect("/users?error=You cannot delete an admin");
+        const currentUser = await UserClass.findByUsername(req.session.user.username);
+        if (!currentUser?.canDeleteUsers()) {
+            return res.redirect("/users?error=You cannot delete users");
         }
 
         await UserClass.deleteById(Number(userId));
