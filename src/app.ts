@@ -32,16 +32,15 @@ app.use(session({
 app.set("view engine", "ejs");
 app.set("views", path.join(process.cwd(), "./src/views"));
 
-app.use("/", homeRoutes);
-//app.use("/home", homeRoutes);
-
-app.get("/dashboard", (req, res) => {
-    if (!req.session.user) return res.redirect("/login");
-    res.render("dashboard", { user: req.session.user });
+app.use((req, res, next) => {
+    res.locals.user = req.session.user || null;
+    next();
 });
 
+app.use("/", homeRoutes);
+
 app.get("/", (req, res) => {
-    res.redirect("/auth/login");
+    res.redirect("/login");
 });
 
 app.use((req, res) => {

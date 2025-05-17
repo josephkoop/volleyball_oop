@@ -3,7 +3,9 @@
     <h2 class="page_heading">Belize Volleyball Teams</h2>
     <div class="flex-heading-buttons">
         <button class="button" onclick="window.location.href='/home'">Back</button>
-        <button onclick="event.preventDefault(); event.stopPropagation(); openAddModal(event)" id="addTeamButton" class="button">Add Team</button>
+        <% if(user){ %>
+            <button onclick="event.preventDefault(); event.stopPropagation(); openAddModal(event)" id="addTeamButton" class="button">Add Team</button>
+        <% } %>
     </div>
 
 
@@ -26,13 +28,15 @@
                         <p><%= team.name %></p>
                         <p><%= team.location %></p>
             
-                        <span onclick="event.preventDefault(); event.stopPropagation(); openEditModal('<%= team.id %>', '<%= team.name %>', '<%= team.rank %>', '<%= team.location %>')">
-                            <img class="icon" src="/images/edit.png" alt="Edit Icon" />
-                        </span>
-            
-                        <span onclick="event.preventDefault(); event.stopPropagation(); openDeleteModal('<%= team.id %>', '<%= team.name %>')">
-                            <img class="icon" src="/images/delete.png" alt="Delete Icon" />
-                        </span>
+                        <% if(user){ %>
+                            <span onclick="event.preventDefault(); event.stopPropagation(); openEditModal('<%= team.id %>', '<%= team.name %>', '<%= team.rank %>', '<%= team.location %>')">
+                                <img class="icon" src="/images/edit.png" alt="Edit Icon" />
+                            </span>
+                
+                            <span onclick="event.preventDefault(); event.stopPropagation(); openDeleteModal('<%= team.id %>', '<%= team.name %>')">
+                                <img class="icon" src="/images/delete.png" alt="Delete Icon" />
+                            </span>
+                        <% } %>
                     </a>
                 </li>
             <% }) %>

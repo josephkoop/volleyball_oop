@@ -1,62 +1,56 @@
 import { Router } from "express";
-import { 
-    getLogin, postLogin, getSignup, postSignup, logout, getDashboard, getUserManagement, postAddAdmin, postDeleteUser
+import {
+    getLogin, postLogin, getSignup, postSignup, logout, getUserManagement, postAddAdmin, postDeleteUser
 } from "../controllers/userController";
-
 import {
-    index, viewTeams, createTeam, editTeam, deleteTeam, viewPlayers, createPlayer, editPlayer, deletePlayer, validateTeam
+    index, viewTeams, createTeam, editTeam, deleteTeam,
+    viewPlayers, createPlayer, editPlayer, deletePlayer, validateTeam
 } from "../controllers/teamController";
-
 import {
-    viewTournaments, viewEvent, createTournament, editTournament, deleteTournament, validateTournament, startTournament, finishTournament, addRound, deleteRound, saveRound
+    viewTournaments, viewEvent, createTournament, editTournament,
+    deleteTournament, validateTournament, startTournament,
+    finishTournament, addRound, deleteRound, saveRound
 } from "../controllers/tournamentController";
+import { isAuthenticated, isNotAuthenticated, isAdmin } from "../middleware/auth";
 
 const router = Router();
-
 
 router.get('/', (req, res) => res.redirect('/home'));
 router.get('/home', index);
 
-router.get("/login", getLogin);
-router.post("/login", postLogin);
+router.get("/login", isNotAuthenticated, getLogin);
+router.post("/login", isNotAuthenticated, postLogin);
+router.get("/logout", isAuthenticated, logout); // protected
 
-router.get("/logout", logout);
-
-
-// User routes
-router.get("/users", getUserManagement);  // User management route
-router.post("/users/add-admin", postAddAdmin);  // Add admin
-router.post("/users/delete-user", postDeleteUser);  // Delete user (admin or regular)
-router.get("/users/signup", getSignup);
-router.post("/users/signup", postSignup);
-
+// User routes (admin only)
+router.get("/users", isAdmin, getUserManagement);
+router.post("/users/add", isAdmin, postAddAdmin);
+router.post("/users/delete", isAdmin, postDeleteUser);
+// router.get("/users/signup", isAdmin, getSignup);
+// router.post("/users/signup", isAdmin, postSignup);
 
 // Tournament routes
 router.get('/tournaments', viewTournaments);
-router.post('/tournaments/add', validateTournament, createTournament);
-
+router.post('/tournaments/add', isAuthenticated, validateTournament, createTournament);
 router.get('/tournaments/:id', viewEvent);
-router.post('/tournaments/edit', validateTournament, editTournament);
-router.post('/tournaments/delete', deleteTournament);
-router.post('/tournaments/start', startTournament);
-router.post('/tournaments/finish', finishTournament);
-router.post('/tournaments/rounds/add', addRound);
-router.post('/tournaments/rounds/save', saveRound);
-router.post('/tournaments/rounds/delete', deleteRound);
-
+router.post('/tournaments/edit', isAuthenticated, validateTournament, editTournament);
+router.post('/tournaments/delete', isAuthenticated, deleteTournament);
+router.post('/tournaments/start', isAuthenticated, startTournament);
+router.post('/tournaments/finish', isAuthenticated, finishTournament);
+router.post('/tournaments/rounds/add', isAuthenticated, addRound);
+router.post('/tournaments/rounds/save', isAuthenticated, saveRound);
+router.post('/tournaments/rounds/delete', isAuthenticated, deleteRound);
 
 // Teams routes
 router.get('/teams', viewTeams);
-router.post('/teams/add', validateTeam, createTeam);
-router.post('/teams/edit', validateTeam, editTeam);               //using post for all
-router.post('/teams/delete', deleteTeam);
-
+router.post('/teams/add', isAuthenticated, validateTeam, createTeam);
+router.post('/teams/edit', isAuthenticated, validateTeam, editTeam);
+router.post('/teams/delete', isAuthenticated, deleteTeam);
 
 // Players routes under specific team
 router.get('/teams/:teamId/players', viewPlayers);
-router.post('/teams/:teamId/players/add', createPlayer);
-router.post('/teams/:teamId/players/edit', editPlayer);
-router.post('/teams/:teamId/players/delete', deletePlayer);
-
+router.post('/teams/:teamId/players/add', isAuthenticated, createPlayer);
+router.post('/teams/:teamId/players/edit', isAuthenticated, editPlayer);
+router.post('/teams/:teamId/players/delete', isAuthenticated, deletePlayer);
 
 export default router;

@@ -1,26 +1,69 @@
 <%- include('components/header') %>
 
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
 
+    <div class="color-strip"></div>
+    
     <header>
-        <h1>BVA Login</h1>
-    </header>
-    <div class="standard-container">
-        <% if (error) { %><p style="color:red;"><%= error %></p><% } %>
-        <% if (successMessage) { %><p style="color:green;"><%= successMessage %></p><% } %>
-
-        <form action="/login" method="post">
-            <input type="text" name="username" placeholder="Username" required />
-            <input type="password" name="password" placeholder="Password" required />
-            <label>
-                <input type="checkbox" name="rememberMe" /> Remember Me
-            </label>
-            <button type="submit">Login</button>
-        </form>
-
-        <div class="center-link">
-            <a href="/signup">Don't have an account? Sign up</a>
+        <div class="container">
+            <div class="logo">BVA</div>
+            <div class="tagline">Belize Volleyball Association</div>
         </div>
-    </div>
+    </header>
+    
+    <main class="container">
+        <div class="login-container">
+            <h1 class="login-title">Member Login</h1>
+            
+            <% if (error) { %>
+                <div class="alert alert-error">
+                    <%= error %>
+                </div>
+            <% } %>
+            
+            <% if (successMessage) { %>
+                <div class="alert alert-success">
+                    <%= successMessage %>
+                </div>
+            <% } %>
+            
+            <form action="/login" method="post">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username" required />
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required />
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rememberMe" name="rememberMe" />
+                    <label for="rememberMe">Remember me</label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Belize Volleyball Association. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 <%- include('components/footer') %>

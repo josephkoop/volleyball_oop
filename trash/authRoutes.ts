@@ -5,11 +5,10 @@ import {
     getSignup,
     postSignup,
     logout,
-    getDashboard,
     getUserManagement,
     postAddAdmin,
     postDeleteUser
-} from "../controllers/userController.js";
+} from "../src/controllers/userController.js";
 
 const router = Router();
 
@@ -22,7 +21,7 @@ router.get("/logout", logout);
 router.get("/dashboard", getDashboard);
 
 router.get("/users", getUserManagement);  // User management route
-router.post("/users/add-admin", postAddAdmin);  // Add admin
-router.post("/users/delete-user", postDeleteUser);  // Delete user (admin or regular)
+router.post("/users/add", postAddAdmin);  // Add admin
+router.post("/users/delete", postDeleteUser);  // Delete user (admin or regular)
 
 export default router;

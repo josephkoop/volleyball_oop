@@ -8,7 +8,9 @@
         <p class="center">Rank: <%= team.rank %></p>
         <p class="center"><%= team.location %></p>
     </div>
-    <button id="addPlayerButton" class="button" onclick="event.preventDefault(); event.stopPropagation(); openAddModalP(event)">Add Player</button>
+    <% if(user){ %>
+        <button id="addPlayerButton" class="button" onclick="event.preventDefault(); event.stopPropagation(); openAddModalP(event)">Add Player</button>
+    <% } %>    
 </div>
 
 <br><br>

@@ -18,7 +18,7 @@
    "strictPropertyInitialization": false,
    "skipLibCheck": true
   },
-  "include": ["src/**/*.ts", "src/app.ts", "src/routes/authRoutes.ts", "src/routes/homeRoutes.ts", "src/controllers/teamController.ts", "src/controllers/tournamentController.js", "src/controllers/userController.ts"],
+  "include": ["src/**/*.ts", "src/app.ts", "trash/authRoutes.ts", "src/routes/homeRoutes.ts", "src/controllers/teamController.ts", "src/controllers/tournamentController.js", "src/controllers/userController.ts"],
   "exclude": ["node_modules"],
   "ts-node": {
    "files": true

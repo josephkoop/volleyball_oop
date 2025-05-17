@@ -8,12 +8,14 @@
     <br>
 
     <div class="player-icons">
-        <span onclick="event.preventDefault(); event.stopPropagation(); openEditModalP('<%= player.id %>', '<%= player.name %>', '<%= player.number %>', '<%= player.position %>', '<%= player.heightFeet %>', '<%= player.heightInches %>', '<%= player.age %>')">
-            <img class="icon" src="/images/edit.png" alt="Edit Icon"/>
-        </span>
+        <% if (user) { %>
+            <span onclick="event.preventDefault(); event.stopPropagation(); openEditModalP('<%= player.id %>', '<%= player.name %>', '<%= player.number %>', '<%= player.position %>', '<%= player.heightFeet %>', '<%= player.heightInches %>', '<%= player.age %>')">
+                <img class="icon" src="/images/edit.png" alt="Edit Icon"/>
+            </span>
 
-        <span onclick="event.preventDefault(); event.stopPropagation(); openDeleteModalP(this, '<%= player.id %>', '<%= player.name %>')">
-            <img class="icon" src="/images/delete.png" alt="Delete Icon">
-        </span>
+            <span onclick="event.preventDefault(); event.stopPropagation(); openDeleteModalP(this, '<%= player.id %>', '<%= player.name %>')">
+                <img class="icon" src="/images/delete.png" alt="Delete Icon">
+            </span>
+        <% } %>
     </div>
 </div>

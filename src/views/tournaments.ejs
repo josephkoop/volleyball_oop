@@ -3,7 +3,9 @@
 <h1 class="page_heading">Tournaments</h1>
 <div class="flex-heading-buttons">
     <button class="button" onclick="window.location.href='/home'">Back</button>
-    <button onclick="event.preventDefault(); event.stopPropagation(); openAddModal(event)" id="addTournamentButton" class="button">Add Tournament</button>
+    <% if(user){ %>
+        <button onclick="event.preventDefault(); event.stopPropagation(); openAddModal(event)" id="addTournamentButton" class="button">Add Tournament</button>
+    <% } %>
 </div>
 
 <div id="current_content">

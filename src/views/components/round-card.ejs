@@ -4,19 +4,22 @@
     <div class="gameOuter"></div>
 
     <div>
-        <button onclick="event.preventDefault(); event.stopPropagation(); deleteRound(event)" data-id="<%= round.id %>" id="deleteRoundButton" class="button">Delete Round</button>
+        <% if (user) { %>
+            <button onclick="event.preventDefault(); event.stopPropagation(); deleteRound(event)" data-id="<%= round.id %>" id="deleteRoundButton" class="button">Delete Round</button>
+        <% } %>
     </div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function (){
+        let user = <%- JSON.stringify(user || null) %>;
         let card = document.getElementById('round_<%= index %>');
 
         let round = JSON.parse(card.dataset.round);
         let tournament = JSON.parse(card.dataset.tournament);
         let participants = JSON.parse(card.dataset.participants);
 
-        if(tournament.status == "Finished"){
+        if(tournament.status == "Finished" || !user){
             round.games.forEach(game => {
                 console.log(round.games);
                 let gameInner = `<div class="game_division">`;

@@ -25,7 +25,7 @@ export const postLogin = async (req: Request, res: Response) => {
 
         req.session.user = { username: user.username, role: user.role, id: Number(user.id) };
         req.session.successMessage = "You have logged in successfully!";
-        res.redirect("/dashboard");
+        res.redirect("/home");
     } catch (error) {
         console.error(error);
         res.redirect("/login?error=" + encodeURIComponent("Login error."));
@@ -59,16 +59,7 @@ export const logout = (req: Request, res: Response) => {
     });
 };
 
-export const getDashboard = (req: Request, res: Response) => {
-    if (!req.session.user) return res.redirect("/login");
-    res.render("dashboard", { user: req.session.user });
-};
-
 export const getUserManagement = async (req: Request, res: Response) => {
-    if (!req.session.user || req.session.user.role !== 'admin') {
-        return res.redirect("/dashboard");
-    }
-
     try {
         const users = await UserClass.getAllExceptOverallAdmin();
         res.render("usermanagement", { users, error: req.query.error || null });
@@ -87,11 +78,11 @@ export const postAddAdmin = async (req: Request, res: Response) => {
             return res.redirect("/users?error=Username already exists");
         }
 
-        await UserClass.create(username, password, 'admin');
+        await UserClass.create(username, password, 'official');
         res.redirect("/users");
     } catch (error) {
         console.error(error);
-        res.redirect("/users?error=Failed to add admin");
+        res.redirect("/users?error=Failed to add official");
     }
 };
 
@@ -99,8 +90,8 @@ export const postDeleteUser = async (req: Request, res: Response) => {
     const { userId } = req.body;
 
     try {
-        if (!req.session.user || (req.session.user.role === 'admin' && req.session.user.username === "Admin" && userId === req.session.user.id)) {
-            return res.redirect("/users?error=You cannot delete the overall admin");
+        if (!req.session.user || req.session.user.role === 'admin') {
+            return res.redirect("/users?error=You cannot delete an admin");
         }
 
         await UserClass.deleteById(Number(userId));

@@ -3,13 +3,16 @@
 
 <div class="flex-heading-buttons">
     <button class="button" onclick="window.location.href='/tournaments'">Back</button>
-    <button onclick="event.preventDefault(); event.stopPropagation(); openEditModal(event)" id="editTournamentButton" class="button">Edit Tournament</button>
-    <button onclick="event.preventDefault(); event.stopPropagation(); openDeleteModal(event)" id="deleteTournamentButton" class="button">Delete Tournament</button>
-    <% if (tournament.status == 'Future'){ %>
-        <button onclick="event.preventDefault(); event.stopPropagation(); openStartModal(event)" id="startTournamentButton" class="button">Start Tournament</button>
-    <% } else if(tournament.status == 'Ongoing'){ %>
-        <button onclick="event.preventDefault(); event.stopPropagation(); openFinishModal(event)" id="finishTournamentButton" class="button">Finish Tournament</button>
-    <% } %>    
+
+    <% if (user) { %>
+        <button onclick="event.preventDefault(); event.stopPropagation(); openEditModal(event)" id="editTournamentButton" class="button">Edit Tournament</button>
+        <button onclick="event.preventDefault(); event.stopPropagation(); openDeleteModal(event)" id="deleteTournamentButton" class="button">Delete Tournament</button>
+        <% if (tournament.status == 'Future'){ %>
+            <button onclick="event.preventDefault(); event.stopPropagation(); openStartModal(event)" id="startTournamentButton" class="button">Start Tournament</button>
+        <% } else if(tournament.status == 'Ongoing'){ %>
+            <button onclick="event.preventDefault(); event.stopPropagation(); openFinishModal(event)" id="finishTournamentButton" class="button">Finish Tournament</button>
+        <% } %>
+    <% } %>
 </div>
 
 <%- include('components/tournament-card', { tournament: tournament, status: true }) %>
@@ -26,8 +29,10 @@
     </div>
 <% } %>
 
-<button onclick="event.preventDefault(); event.stopPropagation(); openAddRoundModal(event)" id="addRoundButton" class="button">Add Round</button>
-<button onclick="event.preventDefault(); event.stopPropagation(); saveAllRounds()" id="saveAllRoundsButton" class="button">Save All</button>
+<% if (user) { %>
+    <button onclick="event.preventDefault(); event.stopPropagation(); openAddRoundModal(event)" id="addRoundButton" class="button">Add Round</button>
+    <button onclick="event.preventDefault(); event.stopPropagation(); saveAllRounds()" id="saveAllRoundsButton" class="button">Save All</button>
+<% } %>
 
 <div class="round_card_container">    
     <% if (tournament.rounds && tournament.rounds.length > 0) { %>
@@ -38,8 +43,6 @@
         <p>No rounds available for this tournament.</p>
     <% } %>
 </div>
-
-
 
 <div id="editTournamentModal" class="modal">
     <div class="modal-content">
@@ -158,7 +161,7 @@
 
 
 <script>
-    tournament = <%- JSON.stringify(tournament) %>
+    tournament = <%- JSON.stringify(tournament) %>;
 
 
     function openDeleteModal(){
