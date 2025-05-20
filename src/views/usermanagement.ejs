@@ -1,67 +1,212 @@
 <%- include('components/header') %>
 
-    <link rel="stylesheet" href="/styles.css">
-
-    <header>
-        <h1>Manage Users</h1>
-    </header>
-
-    <main>
-
-        <% if (error) { %>
-            <p><%= error %></p>
-        <% } %>
-
-        <!-- Add Admin Section (Centered, 600px wide) -->
-        <section class="add-admin-container">
-            <div class="add-admin">
-                <h2>Add New Official</h2>
-                <form action="/users/add" method="post">
-                    <input type="text" name="username" placeholder="Official Username" required>
-                    <input type="password" name="password" placeholder="Official Password" required>
-                    <button type="submit">Add Official</button>
-                </form>
-            </div>
-        </section>
-
-        <!-- Existing Users Section -->
-        <section class="existing-users-container">
-            <h2>Existing Users</h2>
-            <div class="existing-users-columns">
-                <!-- Admin Section (Left) -->
-                <div class="user-column admin-column">
-                    <h3>Admins</h3>
-                    <ul>
-                        <% users.forEach(user => { if(user.role === 'admin'){ %>
-                            <li>
-                                <%= user.username %> (<%= user.role %>)
-                            </li>
-                        <% }} ) %>
-                    </ul>
-                </div>
-
-                <!-- Regular User Section (Right) -->
-                <div class="user-column regular-user-column">
-                    <h3>Officials</h3>
-                    <ul>
-                        <% users.forEach(user => { if(user.role === 'official'){ %>
-                            <li>
-                                <%= user.username %> (<%= user.role %>)
-                                <form action="/users/delete" method="post">
-                                    <input type="hidden" name="userId" value="<%= user.id %>">
-                                    <button type="submit" onclick="return confirm('Are you sure you want to delete this user?')">Delete</button>
-                                </form>
-                            </li>
-                        <% }} ) %>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <div class="back-link">
-            <a href="/home">← Back to Home</a>
+<main class="container users-page">
+    <!-- Header Section -->
+    <section class="tournament-header">
+        <div class="breadcrumb-nav">
+            <a href="/home" class="breadcrumb-link">Home</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">User Management</span>
         </div>
 
-    </main>
+        <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="window.location.href='/home'">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+        </div>
+    </section>
+
+    <!-- Main Title Card -->
+    <section class="tournament-card-section">
+        <div class="welcome-section">
+            <h1><i class="fas fa-users-cog"></i> User Management</h1>
+            
+            <% if (error) { %>
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i> <%= error %>
+                </div>
+            <% } %>
+        </div>
+    </section>
+
+    <!-- Add User Form -->
+    <section class="welcome-section">
+        <h2 class="section-title">
+            <i class="fas fa-user-plus"></i> Add New Official
+        </h2>
+        
+        <form class="add-user-form" action="/users/add" method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter password" required>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Add Official
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <!-- User Lists -->
+    <section class="welcome-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-users"></i> Existing Users
+                <span class="badge"><%= users.length %></span>
+            </h2>
+        </div>
+        
+        <div class="user-columns-container">
+            <!-- Admins Column -->
+            <div class="user-column">
+                <div class="column-header admin">
+                    <h3><i class="fas fa-user-shield"></i> Administrators</h3>
+                    <span class="badge"><%= users.filter(u => u.role === 'admin').length %></span>
+                </div>
+                <div class="user-list">
+                    <% users.forEach(user => { if(user.role === 'admin'){ %>
+                        <div class="user-card">
+                            <div class="user-avatar admin">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <div class="user-info">
+                                <span class="user-name"><%= user.username %></span>
+                                <span class="user-role"><%= user.role %></span>
+                            </div>
+                        </div>
+                    <% }} ) %>
+                </div>
+            </div>
+            
+            <!-- Officials Column -->
+            <div class="user-column">
+                <div class="column-header official">
+                    <h3><i class="fas fa-user-tie"></i> Officials</h3>
+                    <span class="badge"><%= users.filter(u => u.role === 'official').length %></span>
+                </div>
+                <div class="user-list">
+                    <% users.forEach(user => { if(user.role === 'official'){ %>
+                        <div class="user-card">
+                            <div class="user-avatar official">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div class="user-info">
+                                <span class="user-name"><%= user.username %></span>
+                                <span class="user-role"><%= user.role %></span>
+                            </div>
+                            <button class="btn btn-danger btn-sm" 
+                                    onclick="openDeleteModal('<%= user.username %>', '<%= user.id %>')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    <% }} ) %>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteUserModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Delete User</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <form id="deleteUserForm" method="POST" action="/users/delete">
+            <input type="hidden" name="userId" id="deleteUserId">
+            
+            <div class="modal-body">
+                <div class="warning-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Are you sure you want to delete <strong id="userToDelete"></strong>? This action cannot be undone.</p>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn btn-danger">Delete User</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Open delete confirmation modal
+    function openDeleteModal(username, userId) {
+        const modal = document.getElementById('deleteUserModal');
+        document.getElementById('userToDelete').textContent = username;
+        document.getElementById('deleteUserId').value = userId;
+        modal.classList.add('show');
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    }
+
+    // Close modal
+    function closeModal() {
+        document.getElementById('deleteUserModal').classList.remove('show');
+    }
+
+    // Form validation for add user
+    document.addEventListener('DOMContentLoaded', function() {
+        const addUserForm = document.querySelector('.add-user-form');
+        
+        if (addUserForm) {
+            addUserForm.addEventListener('submit', function(e) {
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value.trim();
+                
+                if (username.length < 3) {
+                    alert('Username must be at least 3 characters long');
+                    e.preventDefault();
+                    return false;
+                }
+                
+                if (password.length < 6) {
+                    alert('Password must be at least 6 characters long');
+                    e.preventDefault();
+                    return false;
+                }
+                
+                return true;
+            });
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    });
+
+    // Initialize delete buttons
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteButtons = document.querySelectorAll('.btn-danger');
+        
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (!this.hasAttribute('data-confirmed')) {
+                    e.preventDefault();
+                    const username = this.getAttribute('data-username');
+                    const userId = this.getAttribute('data-userid');
+                    openDeleteModal(username, userId);
+                }
+            });
+        });
+    });
+</script>
 
 <%- include('components/footer') %>

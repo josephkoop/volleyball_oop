@@ -1,87 +1,142 @@
 <%- include('components/header') %>
 
-<h1 class="page_heading">Tournaments</h1>
-<div class="flex-heading-buttons">
-    <button class="button" onclick="window.location.href='/home'">Back</button>
-    <% if(user){ %>
-        <button onclick="event.preventDefault(); event.stopPropagation(); openAddModal(event)" id="addTournamentButton" class="button">Add Tournament</button>
-    <% } %>
-</div>
+<main class="container tournaments-page">
+    <!-- Tournaments Header Section -->
+    <section class="teams-header">
+        <div class="breadcrumb-nav">
+            <a href="/home" class="breadcrumb-link">Home</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Tournaments</span>
+        </div>
 
-<div id="current_content">
-    <h2>Ongoing Tournaments</h2>
+        <div class="action-buttons">
+        <button class="btn btn-secondary" id="backButton">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
 
-    <% ongoingTournaments.forEach(tournament => { %>
-        <a href="/tournaments/<%= tournament.id %>">
-            <%- include('components/tournament-card', { tournament: tournament, status: false }) %>
-        </a>
-    <% }) %>
-</div>
+            <% if(user){ %>
+                <button id="addTournamentButton" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Tournament
+                </button>
+            <% } %>
+        </div>
+    </section>
 
-<div class="status_bar">
-    <button id="finished_button" class="selected_status">Finished</button>
-    <button id="upcomming_button">Future</button>
-</div>
+    <!-- Teams List Section -->
+    <section class="teams-section">
+        <h2 class="section-title2">
+            <i class="fas fa-medal"></i> Belize Volleyball Tournaments
+        </h2>
 
-<div id="finished_content">
-    <p>Finished Tournaments</p>
+        <div id="current_content">
+            <h2 class="section-title">
+                <i class="fas fa-volleyball-ball"></i> Ongoing Tournaments
+            </h2>
 
-    <% finishedTournaments.forEach(tournament => { %>
-        <a href="/tournaments/<%= tournament.id %>">
-            <%- include('components/tournament-card', { tournament: tournament, status: false }) %>
-        </a>
-    <% }) %>
-</div>
+            <div class="tournament-grid" id="ongoingTournamentsGrid">
+                <% ongoingTournaments.forEach(tournament => { %>
+                    <a href="/tournaments/<%= tournament.id %>" class="tournament-card">
+                        <h3><%= tournament.name %></h3>
+                        <p><i class="fas fa-map-marker-alt"></i> <%= tournament.venue %></p>
+                        <p><i class="fas fa-calendar-alt"></i> <%= new Date(tournament.start_date).toLocaleDateString() %> - <%= new Date(tournament.end_date).toLocaleDateString() %></p>
+                        <div class="tournament-status ongoing">Ongoing</div>
+                    </a>
+                <% }) %>
+            </div>
+        </div>
 
-<div id="upcomming_content" class="hidden">
-    <p>Future Tournaments</p>
+        <div class="status_bar">
+            <button id="finished_button" class="selected_status">Finished</button>
+            <button id="upcoming_button" class="btn-stats">Future</button>
+        </div>
 
-    <% futureTournaments.forEach(tournament => { %>
-        <a href="/tournaments/<%= tournament.id %>">
-            <%- include('components/tournament-card', { tournament: tournament, status: false }) %>
-        </a>
-    <% }) %>
-</div>
+        <div id="finished_content">
+            <h2 class="section-title">
+                <i class="fas fa-trophy"></i> Finished Tournaments
+            </h2>
 
+            <div class="tournament-grid" id="finishedTournamentsGrid">
+                <% finishedTournaments.forEach(tournament => { %>
+                    <a href="/tournaments/<%= tournament.id %>" class="tournament-card">
+                        <h3><%= tournament.name %></h3>
+                        <p><i class="fas fa-map-marker-alt"></i> <%= tournament.venue %></p>
+                        <p><i class="fas fa-calendar-alt"></i> <%= new Date(tournament.start_date).toLocaleDateString() %> - <%= new Date(tournament.end_date).toLocaleDateString() %></p>
+                        <div class="tournament-status completed">Completed</div>
+                    </a>
+                <% }) %>
+            </div>
+        </div>
 
+        <div id="upcoming_content" class="hidden">
+            <h2 class="section-title">
+                <i class="fas fa-calendar-plus"></i> Future Tournaments
+            </h2>
 
+            <div class="tournament-grid" id="upcomingTournamentsGrid">
+                <% futureTournaments.forEach(tournament => { %>
+                    <a href="/tournaments/<%= tournament.id %>" class="tournament-card">
+                        <h3><%= tournament.name %></h3>
+                        <p><i class="fas fa-map-marker-alt"></i> <%= tournament.venue %></p>
+                        <p><i class="fas fa-calendar-alt"></i> <%= new Date(tournament.start_date).toLocaleDateString() %> - <%= new Date(tournament.end_date).toLocaleDateString() %></p>
+                        <div class="tournament-status future">Upcoming</div>
+                    </a>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Add Tournament Modal -->
 <div id="addTournamentModal" class="modal">
     <div class="modal-content">
-        <form id="addTournamentForm" method="POST">
+        <div class="modal-header">
+            <h3>Add New Tournament</h3>
+            <button class="modal-close" id="modalCloseButton">&times;</button>
+        </div>
+        <form id="addTournamentForm">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" name="name" id="name" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="venue">Venue</label>
+                        <input type="text" name="venue" id="venue" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="organizer">Organizer</label>
+                        <input type="text" name="organizer" id="organizer" required>
+                    </div>
+                </div>
 
-            <div>
-                <label for="name">Name: </label>
-                <input type="text" name="name"/>
-            </div>
-            <div>
-                <label for="venue">Venue: </label>
-                <input type="text" name="venue"/>
-            </div>
-            <div>
-                <label for="start_date">Start Date: </label>
-                <input type="date" name="start_date"/>           
-            </div>
-            <div>
-                <label for="end_date">End Date: </label>
-                <input type="date" name="end_date"/>
-            </div>              
-            <div>
-                <label for="organizer">Organizer: </label>
-                <input type="string" name="organizer"/>
-            </div>              
-            <div>
-                <label for="contact">Contact Number: </label>
-                <input type="string" name="contact"/>
-            </div>            
-            <div>
-                <label for="description">Description: </label>
-                <textarea type="description" name="description"></textarea>
-            </div>              
-            <div class="form-button">
-                <button class="button" type="submit">Add</button>
-                <button class="button" type="button" onclick="closeModal()">Cancel</button>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="start_date">Start Date</label>
+                        <input type="date" name="start_date" id="start_date" required>           
+                    </div>
+                    <div class="form-group">
+                        <label for="end_date">End Date</label>
+                        <input type="date" name="end_date" id="end_date" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="contact">Contact Number</label>
+                    <input type="tel" name="contact" id="contact" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea name="description" id="description" rows="4"></textarea>
+                </div>
             </div>
 
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancelButton">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Tournament</button>
+            </div>
         </form>
     </div>
 </div>
@@ -89,54 +144,113 @@
 
 
 <script>
-    function openAddModal(){
-        document.getElementById("addTournamentModal").classList.add("show");
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // DOM Elements
+        const backButton = document.getElementById('backButton');
+        const addTournamentButton = document.getElementById('addTournamentButton');
+        const finishedButton = document.getElementById('finished_button');
+        const upcomingButton = document.getElementById('upcoming_button');
+        const modalCloseButton = document.getElementById('modalCloseButton');
+        const cancelButton = document.getElementById('cancelButton');
+        const addTournamentForm = document.getElementById('addTournamentForm');
+        const addTournamentModal = document.getElementById('addTournamentModal');
+        const finishedContent = document.getElementById('finished_content');
+        const upcomingContent = document.getElementById('upcoming_content');
 
-
-    function closeModal(){
-        document.getElementById("addTournamentModal").classList.remove("show");
-        document.getElementById("addTournamentForm").reset();
-    }
-
-
-    document.addEventListener("click", function(event){
-        let addModal = document.getElementById("addTournamentModal");
-        let addModalContent = document.querySelector("#addTournamentModal .modal-content");
-        if(addModal.classList.contains("show") && !addModalContent.contains(event.target)){
-            closeModal();
-        }   
-    });
-</script>
-
-
-
-<script>
-    document.getElementById('addTournamentForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-    
-        const formData = new FormData(e.target);
-        const data1 = Object.fromEntries(formData.entries());
-    
-        try {
-            const res = await fetch('/tournaments/add', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: data1.name, venue: data1.venue, start_date: data1.start_date, end_date: data1.end_date, organizer: data1.organizer, contact: data1.contact, description: data1.description })
+        // Event Listeners
+        if (backButton) {
+            backButton.addEventListener('click', () => {
+                window.location.href = '/home';
             });
-    
-            const data = await res.json();
-    
-            if (!res.ok) {
-                alert(data.errors?.map(e => e.msg).join('\n') || data.error);
-            } else {
+        }
+
+        if (addTournamentButton) {
+            addTournamentButton.addEventListener('click', openAddModal);
+        }
+
+        if (finishedButton) {
+            finishedButton.addEventListener('click', showFinishedTournaments);
+        }
+
+        if (upcomingButton) {
+            upcomingButton.addEventListener('click', showUpcomingTournaments);
+        }
+
+        if (modalCloseButton) {
+            modalCloseButton.addEventListener('click', closeModal);
+        }
+
+        if (cancelButton) {
+            cancelButton.addEventListener('click', closeModal);
+        }
+
+        if (addTournamentForm) {
+            addTournamentForm.addEventListener('submit', handleFormSubmit);
+        }
+
+        // Modal click outside handler
+        document.addEventListener('click', function(event) {
+            if (addTournamentModal.classList.contains('show') && 
+                !event.target.closest('.modal-content') && 
+                !event.target.closest('#addTournamentButton')) {
                 closeModal();
-                window.location.reload();
-                alert("Tournament added succesfully.");                               //Using alerts as error/success messages
             }
-        } catch (err) {
-            console.error(err);
-            alert('Something went wrong.');
+        });
+
+        // Functions
+        function openAddModal(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            addTournamentModal.classList.add('show');
+        }
+
+        function closeModal() {
+            addTournamentModal.classList.remove('show');
+            addTournamentForm.reset();
+        }
+
+        function showFinishedTournaments() {
+            finishedContent.classList.remove('hidden');
+            upcomingContent.classList.add('hidden');
+            finishedButton.classList.add('selected_status');
+            upcomingButton.classList.remove('selected_status');
+        }
+
+        function showUpcomingTournaments() {
+            finishedContent.classList.add('hidden');
+            upcomingContent.classList.remove('hidden');
+            upcomingButton.classList.add('selected_status');
+            finishedButton.classList.remove('selected_status');
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+        
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+        
+            try {
+                const res = await fetch('/tournaments/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+        
+                const responseData = await res.json();
+        
+                if (!res.ok) {
+                    alert(responseData.errors?.map(e => e.msg).join('\n') || responseData.error);
+                } else {
+                    closeModal();
+                    window.location.reload();
+                    alert("Tournament added successfully.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Something went wrong.');
+            }
         }
     });
 </script>

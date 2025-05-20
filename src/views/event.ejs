@@ -1,13 +1,5 @@
 <%- include('components/header') %>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link rel="stylesheet" href="/event.css">
-
-<div class="color-strip"></div>
-
 <main class="container tournament-page">
     <!-- Tournament Header Section -->
     <section class="tournament-header">
@@ -149,7 +141,7 @@
                     <p>This tournament doesn't have any rounds scheduled yet.</p>
                     <% if (user) { %>
                         <button onclick="openAddRoundModal(event)" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Add First Round
+                            Add Round
                         </button>
                     <% } %>
                 </div>
@@ -322,18 +314,6 @@
         </form>
     </div>
 </div>
-
-<footer>
-    <div class="container">
-        <p>&copy; 2025 Belize Volleyball Association. All rights reserved.</p>
-        <div class="social-links">
-            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-        </div>
-    </div>
-</footer>
 
 
 <script>

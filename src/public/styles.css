@@ -1,266 +1,178 @@
-/* === General Styles === */
-body {
-    font-family: Arial, sans-serif;
+:root{
+    --background: rgba(255, 251, 206, 0.8);
+    --nav: darkblue;
+    --navtext: yellow;
+    --hover: rgba(234, 225, 112, 0.8);
+    --heading: rgba(234, 225, 112, 0.8);
+    --card: rgba(234, 225, 112, 0.8);
+
+    
+    --belize-red: #CE1126;
+    --belize-blue: #0038A8;
+    --belize-white: #FFFFFF;
+    --volleyball-orange: #FF7F00;
+    --volleyball-blue: #0055A4;
+    --light-gray: #F5F5F5;
+    --dark: #333333;
+    --admin-color: #6f42c1;
+    --official-color: #17a2b8;
+}
+
+* {
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
-}
-
-/* === Header === */
-header {
-    background-color: #4CAF50;
-    color: white;
-    text-align: center;
-    padding: 15px 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-h1, h2, h3 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-}
-
-/* === Reusable 600px Centered Container === */
-.standard-container {
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-/* === Forms Inside Containers === */
-.standard-container form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
-
-/* === Input Fields === */
-.standard-container input[type="text"],
-.standard-container input[type="password"] {
-    padding: 12px;
-    width: 100%;
-    max-width: 400px;
     box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 16px;
-    background-color: #fff;
 }
 
-/* === Buttons === */
-.standard-container button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-.standard-container button:hover {
-    background-color: #45a049;
-}
-
-/* === Links (Sign Up/Log In) === */
-.center-link {
-    margin-top: 20px;
-}
-
-.center-link a {
-    color: #4CAF50;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.center-link a:hover {
-    text-decoration: underline;
-}
-
-/* === Dashboard Container === */
-.dashboard-container {
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.dashboard-container a {
-    color: #4CAF50;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.dashboard-container a:hover {
-    text-decoration: underline;
-}
-
-/* === Add Admin Section === */
-.add-admin-container {
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.add-admin form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.add-admin input[type="text"],
-.add-admin input[type="password"] {
-    padding: 12px;
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 16px;
-    background-color: #fff;
-}
-
-.add-admin button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-.add-admin button:hover {
-    background-color: #45a049;
-}
-
-/* === Existing Users Section === */
-.existing-users-container {
-    margin: 40px auto;
-    width: 90%;
+.container {
     max-width: 1200px;
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    min-width: 90%;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
-/* === Columns Layout for Users === */
-.existing-users-columns {
-    display: flex;
-    justify-content: space-between;
-    gap: 30px;
-    flex-wrap: wrap;
+section{
+    width: 90%;
 }
 
-.user-column {
-    flex: 1;
-    min-width: 300px;
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+.color-strip {
+    height: 10px;
+    background: linear-gradient(90deg, 
+        var(--belize-red) 0%, 
+        var(--belize-red) 25%, 
+        var(--belize-blue) 25%, 
+        var(--belize-blue) 50%, 
+        var(--volleyball-orange) 50%, 
+        var(--volleyball-orange) 75%, 
+        var(--belize-white) 75%, 
+        var(--belize-white) 100%);
 }
 
-.user-column h3 {
-    margin-top: 0;
-    border-bottom: 2px solid #ddd;
-    padding-bottom: 10px;
-}
-
-/* === User Lists === */
-.user-column ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: 12px;
-}
-
-.user-column li {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    background-color: #fff;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-}
-
-.user-column li form {
-    margin: 0;
-}
-
-.user-column li button {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    font-size: 14px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.user-column li button:hover {
-    background-color: #c0392b;
-}
-
-/* === Back Link === */
-.back-link {
-    text-align: center;
-    margin-top: 40px;
-}
-
-.back-link a {
-    color: #4CAF50;
+/* Button Styles */
+.btn {
+    display: inline-block;
+    padding: 12px 30px;
+    border-radius: 50px;
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    min-width: 180px;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
 }
 
-.back-link a:hover {
-    text-decoration: underline;
+.btn-primary {
+    background-color: var(--belize-blue);
+    color: var(--belize-white);
+    border-color: var(--belize-blue);
 }
 
-/* === Responsive Design === */
-@media screen and (max-width: 768px) {
-    .add-admin-container,
-    .standard-container,
-    .existing-users-container {
-        margin: 20px;
-        padding: 20px;
-    }
+.btn-primary:hover {
+    background-color: transparent;
+    color: var(--belize-blue);
+}
 
-    .existing-users-columns {
-        flex-direction: column;
-    }
+.btn-secondary {
+    background-color: var(--volleyball-orange);
+    color: var(--belize-white);
+    border-color: var(--volleyball-orange);
+}
 
-    .user-column {
-        width: 100%;
-    }
+.btn-secondary:hover {
+    background-color: transparent;
+    color: var(--volleyball-orange);
+}
 
-    .user-column li {
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
+footer {
+    background: linear-gradient(135deg, var(--belize-blue), var(--volleyball-blue));
+    color: var(--belize-white);
+    text-align: center;
+    padding: 2rem 0;
+    border-top: 5px solid var(--belize-red);
+    margin-top: auto;
+}
 
-    .user-column li form {
-        margin-top: 10px;
-    }
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+header {
+    background: linear-gradient(135deg, var(--belize-blue), var(--volleyball-blue));
+    color: var(--belize-white);
+    padding: 2rem 0;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-bottom: 5px solid var(--belize-red);
+}
+
+a{
+    text-decoration: none;
+    color: black;
+}
+
+
+.nav{
+    width: 100%;
+    background-color: var(--nav);
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.nav a{
+    color: var(--navtext);
+    text-decoration: none;
+    padding: 5px 15px 5px 15px;
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+}
+
+#name{
+    margin-right: auto;
+}
+
+.nav a::after{
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    transition: width 0.3s ease-in-out;
+    background-color: var(--navtext);
+}
+
+.nav a:hover::after{
+    width: 100%;
 }

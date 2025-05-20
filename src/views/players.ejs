@@ -1,69 +1,152 @@
 <%- include('components/header') %>
 
-<h2 class="page_heading"><%= team.name %></h2>
+<main class="container team-page">
+    <!-- Team Header Section -->
+    <section class="team-header">
+        <div class="breadcrumb-nav">
+            <a href="/teams" class="breadcrumb-link">Teams</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current"><%= team.name %></span>
+        </div>
 
-<div class="flex-heading-buttons">
-    <button class="button" onclick="window.location.href='/teams'">Back</button>
-    <div>
-        <p class="center">Rank: <%= team.rank %></p>
-        <p class="center"><%= team.location %></p>
-    </div>
-    <% if(user){ %>
-        <button id="addPlayerButton" class="button" onclick="event.preventDefault(); event.stopPropagation(); openAddModalP(event)">Add Player</button>
-    <% } %>    
-</div>
+        <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="window.location.href='/teams'">
+                <i class="fas fa-arrow-left"></i> Back to Teams
+            </button>
 
-<br><br>
+            <% if(user){ %>
+                <button id="addPlayerButton" class="btn btn-primary" onclick="event.preventDefault(); event.stopPropagation(); openAddModalP(event)">
+                    <i class="fas fa-plus"></i> Add Player
+                </button>
+            <% } %>
+        </div>
+    </section>
 
-<div class="player_card_container">
-    <% if(players != null){ %>
-        <% players.forEach(player => { %>
-            <%- include('components/player-card', { player: player }) %>
-        <% }) %>
-    <% }else{ %>
-        <div>There are no players on this team.</div>
-    <% } %>
-</div>
+    <!-- Main Team Card -->
+    <section class="team-card-section">
+        <div class="welcome-section">
+            <h1><%= team.name %></h1>
+            <div class="team-details">
+                <p><i class="fas fa-map-marker-alt"></i> <%= team.location %></p>
+                <p><i class="fas fa-star"></i> Rank: #<%= team.rank %></p>
+                <div class="team-rank">
+                    <%= team.category || 'Senior Team' %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Players Section -->
+    <section class="players-section">
+        <h2 class="section-title">
+            <i class="fas fa-users"></i> Players
+            <span class="badge"><%= players ? players.length : 0 %></span>
+        </h2>
+
+        <% if(players && players.length > 0){ %>
+            <div class="players-grid">
+                <% players.forEach(player => { %>
+                    <div class="player-card">
+                        <div class="player-header">
+                            <div class="player-number"><%= player.number %></div>
+                            <div class="player-name"><%= player.name %></div>
+                        </div>
+                        <div class="player-details">
+                            <div class="player-detail">
+                                <span class="player-detail-label">Position</span>
+                                <span><%= player.position %></span>
+                            </div>
+                            <div class="player-detail">
+                                <span class="player-detail-label">Age</span>
+                                <span><%= player.age %></span>
+                            </div>
+                            <div class="player-detail">
+                                <span class="player-detail-label">Height</span>
+                                <span><%= player.heightFeet %>'<%= player.heightInches %></span>
+                            </div>
+                        </div>
+                        <% if(user){ %>
+                            <div class="player-actions">
+                                <button class="btn-icon btn-primary" onclick="openEditModalP(event, '<%= player.id %>')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-icon btn-danger" onclick="openDeleteModalP(event, '<%= player.id %>')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        <% } %>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <div class="empty-state">
+                <i class="fas fa-users-slash"></i>
+                <h3>No Players Yet</h3>
+                <p>This team currently has no players. <% if(user){ %>Add one to get started!<% } %></p>
+                <% if(user){ %>
+                    <button id="addPlayerButtonEmpty" class="btn btn-primary" onclick="event.preventDefault(); event.stopPropagation(); openAddModalP(event)">
+                        <i class="fas fa-plus"></i> Add Player
+                    </button>
+                <% } %>
+            </div>
+        <% } %>
+    </section>
+</main>
 
 <!-- Add Player Modal -->
 <div id="addPlayerModal" class="modal">
     <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add New Player</h3>
+            <button class="modal-close" onclick="closeModalP()">&times;</button>
+        </div>
         <form id="addPlayerForm" action="/teams/<%= team.id %>/players/add" method="POST">
-            <!-- <input type="hidden" name="form_type" value="add"/> -->
             <input type="hidden" name="team_id" value="<%= team.id %>">
 
-            <div>
-                <label for="name">Name: </label>
-                <input type="text" name="name"/>
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="Player's full name" required />
             </div>
-            <div>
-                <label for="number">Number: </label>
-                <input type="number" name="number"/>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="number">Jersey Number</label>
+                    <input type="number" id="number" name="number" class="form-control" placeholder="00" min="0" max="99" required />
+                </div>
+                
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" class="form-control" placeholder="Age" min="12" max="60" required />
+                </div>
             </div>
-            <div>
-                <label for="position">Position: </label>
-                <select name="position">
-                    <option>Select Position</option>
+            
+            <div class="form-group">
+                <label for="position">Position</label>
+                <select id="position" name="position" class="form-control" required>
+                    <option value="" disabled selected>Select Position</option>
                     <% ['Setter', 'Libero', 'Outside Hitter', 'Middle Blocker', 'Opposite'].forEach(pos => { %>
-                        <option><%= pos %></option>
+                        <option value="<%= pos %>"><%= pos %></option>
                     <% }) %>
                 </select>
             </div>
-            <div class="height">
-                <label for="">Height: </label>
-                <div>
-                    <input type="number" name="heightFeet"/>
-                    <input type="number" name="heightInches"/>
+            
+            <div class="form-group">
+                <label>Height</label>
+                <div class="height-inputs">
+                    <div class="height-input">
+                        <input type="number" id="heightFeet" name="heightFeet" class="form-control" placeholder="Feet" min="4" max="7" required />
+                        <span>ft</span>
+                    </div>
+                    <div class="height-input">
+                        <input type="number" id="heightInches" name="heightInches" class="form-control" placeholder="Inches" min="0" max="11" required />
+                        <span>in</span>
+                    </div>
                 </div>
             </div>
-            <div>
-                <label for="age">Age: </label>
-                <input type="number" name="age"/>
-            </div>
 
-            <div class="form-button">
-                <button class="button" type="submit">Add</button>
-                <button class="button" type="button" onclick="closeModalP()">Cancel</button>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModalP()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Player</button>
             </div>
         </form>
     </div>
@@ -72,44 +155,59 @@
 <!-- Edit Player Modal -->
 <div id="editPlayerModal" class="modal">
     <div class="modal-content">
+        <div class="modal-header">
+            <h3>Edit Player</h3>
+            <button class="modal-close" onclick="closeModalP()">&times;</button>
+        </div>
         <form id="editPlayerForm" action="/teams/<%= team.id %>/players/edit" method="POST">
             <input type="hidden" name="_method" value="PUT">
-            <!-- <input type="hidden" name="form_type" value="edit"/> -->
             <input type="hidden" name="id" id="editPlayerId"/>
 
-            <div>
-                <label for="name">Name: </label>
-                <input type="text" name="name" id="editPlayerName"/>
+            <div class="form-group">
+                <label for="editPlayerName">Full Name</label>
+                <input type="text" id="editPlayerName" name="name" class="form-control" required />
             </div>
-            <div>
-                <label for="number">Number: </label>
-                <input type="number" name="number" id="editPlayerNumber"/>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editPlayerNumber">Jersey Number</label>
+                    <input type="number" id="editPlayerNumber" name="number" class="form-control" min="0" max="99" required />
+                </div>
+                
+                <div class="form-group">
+                    <label for="editPlayerAge">Age</label>
+                    <input type="number" id="editPlayerAge" name="age" class="form-control" min="12" max="60" required />
+                </div>
             </div>
-            <div>
-                <label for="position">Position: </label>
-                <select name="position" id="editPlayerPosition">
+            
+            <div class="form-group">
+                <label for="editPlayerPosition">Position</label>
+                <select id="editPlayerPosition" name="position" class="form-control" required>
                     <option value="" disabled>Select Position</option>
                     <% ['Setter', 'Libero', 'Outside Hitter', 'Middle Blocker', 'Opposite'].forEach(pos => { %>
-                        <option><%= pos %></option>
+                        <option value="<%= pos %>"><%= pos %></option>
                     <% }) %>
                 </select>
             </div>
-            <div class="height">
-                <label for="">Height: </label>
-                <div>
-                    <input type="number" name="heightFeet" id="editPlayerHeightFeet"/>
-                    <input type="number" name="heightInches" id="editPlayerHeightInches"/>
+            
+            <div class="form-group">
+                <label>Height</label>
+                <div class="height-inputs">
+                    <div class="height-input">
+                        <input type="number" id="editPlayerHeightFeet" name="heightFeet" class="form-control" min="4" max="7" required />
+                        <span>ft</span>
+                    </div>
+                    <div class="height-input">
+                        <input type="number" id="editPlayerHeightInches" name="heightInches" class="form-control" min="0" max="11" required />
+                        <span>in</span>
+                    </div>
                 </div>
             </div>
-            <div>
-                <label for="age">Age: </label>
-                <input type="number" name="age" id="editPlayerAge"/>
-            </div>
-            <div>
-                <label for="newTeamId">Team: </label>
-                <select name="newTeamId" id="editPlayerTeam">
+            
+            <div class="form-group">
+                <label for="editPlayerTeam">Team</label>
+                <select id="editPlayerTeam" name="newTeamId" class="form-control" required>
                     <% teams.forEach(steam => { %>
-                        <!-- steam.id: <%= steam.id %>, team.id: <%= team.id %> -->
                         <% if(steam.id == team.id){ %>
                             <option value="<%= steam.id %>" selected><%= steam.name %></option>
                         <% }else{ %>
@@ -119,9 +217,9 @@
                 </select>
             </div>
 
-            <div class="form-button">
-                <button class="button" type="submit">Update</button>
-                <button class="button" type="button" onclick="closeModalP()">Cancel</button>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModalP()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update Player</button>
             </div>
         </form>
     </div>
@@ -130,36 +228,41 @@
 <!-- Delete Player Modal -->
 <div id="deletePlayerModal" class="modal">
     <div class="modal-content">
+        <div class="modal-header">
+            <h3>Confirm Deletion</h3>
+            <button class="modal-close" onclick="closeModalP()">&times;</button>
+        </div>
         <form id="deletePlayerForm" action="/teams/<%= team.id %>/players/delete" method="POST">
             <input type="hidden" name="id" id="deletePlayerId"/>
-            <!-- <input type="hidden" name="_method" value="DELETE"> -->
-            <p>Check Javascript</p>
-            <div class="form-button">
-                <button class="button" type="submit">Delete</button>
-                <button class="button" type="button" onclick="closeModalP()">Cancel</button>
+            
+            <div class="modal-body">
+                <div class="warning-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Are you sure you want to delete this player? This action cannot be undone.</p>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModalP()">Cancel</button>
+                <button type="submit" class="btn btn-danger">Delete Player</button>
             </div>
         </form>
     </div>
 </div>
 
+
 <script>
-    function openAddModalP(){
+    function openAddModalP() {
         document.getElementById("addPlayerModal").classList.add("show");
     }
 
-
-    function openDeleteModalP(element, playerId, name){
-        console.log("player_id", playerId);
+    function openDeleteModalP(element, playerId, name) {
         document.getElementById("deletePlayerId").value = playerId;
-
-        let message = document.querySelector("#deletePlayerModal p");
-        message.textContent = `Are you sure you want to delete Player ${name}?`;
-
+        document.getElementById("deleteConfirmationText").textContent = `Are you sure you want to delete ${name}? This action cannot be undone.`;
         document.getElementById("deletePlayerModal").classList.add("show");
     }
 
-
-    function openEditModalP(playerId, name, number, position, heightFeet, heightInches, age){
+    function openEditModalP(playerId, name, number, position, heightFeet, heightInches, age) {
         document.getElementById("editPlayerId").value = playerId;
         document.getElementById("editPlayerName").value = name;
         document.getElementById("editPlayerNumber").value = number;
@@ -171,32 +274,60 @@
         document.getElementById("editPlayerModal").classList.add("show");
     }
 
-
-    function closeModalP(){
+    function closeModalP() {
         document.getElementById("addPlayerModal").classList.remove("show");
         document.getElementById("editPlayerModal").classList.remove("show");
         document.getElementById("deletePlayerModal").classList.remove("show");
     }
 
+    document.addEventListener("click", function(event) {
+        let modals = ['addPlayerModal', 'editPlayerModal', 'deletePlayerModal'];
+        modals.forEach(modalId => {
+            let modal = document.getElementById(modalId);
+            let modalContent = document.querySelector(`#${modalId} .modal-content`);
+            if (modal.classList.contains("show") && 
+                !modalContent.contains(event.target) && 
+                !event.target.classList.contains('modal-close') && 
+                !event.target.closest('.modal-close')) {
+                closeModalP();
+            }
+        });
+    });
 
-    document.addEventListener("click", function(event){
-        let editModal = document.getElementById("editPlayerModal");
-        let editModalContent = document.querySelector("#editPlayerModal .modal-content");
-        if(editModal.classList.contains("show") && !editModalContent.contains(event.target)){
-            closeModalP();
-        }
-
-        let addModal = document.getElementById("addPlayerModal");
-        let addModalContent = document.querySelector("#addPlayerModal .modal-content");
-        if(addModal.classList.contains("show") && !addModalContent.contains(event.target)){
-            closeModalP();
-        }    
+    // Form validation for add player
+    document.getElementById('addPlayerForm')?.addEventListener('submit', function(e) {
+        const feet = parseInt(document.getElementById('heightFeet').value);
+        const inches = parseInt(document.getElementById('heightInches').value);
         
-        let deleteModal = document.getElementById("deletePlayerModal");
-        let deleteModalContent = document.querySelector("#deletePlayerModal .modal-content");
-        if(deleteModal.classList.contains("show") && !deleteModalContent.contains(event.target)){
-            closeModalP();
-        }   
+        if (inches >= 12) {
+            e.preventDefault();
+            alert('Inches must be less than 12');
+            return false;
+        }
+        
+        if (feet < 4 || feet > 7) {
+            e.preventDefault();
+            alert('Height must be between 4 and 7 feet');
+            return false;
+        }
+    });
+
+    // Form validation for edit player
+    document.getElementById('editPlayerForm')?.addEventListener('submit', function(e) {
+        const feet = parseInt(document.getElementById('editPlayerHeightFeet').value);
+        const inches = parseInt(document.getElementById('editPlayerHeightInches').value);
+        
+        if (inches >= 12) {
+            e.preventDefault();
+            alert('Inches must be less than 12');
+            return false;
+        }
+        
+        if (feet < 4 || feet > 7) {
+            e.preventDefault();
+            alert('Height must be between 4 and 7 feet');
+            return false;
+        }
     });
 </script>
 

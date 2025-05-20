@@ -1,39 +1,8 @@
-:root {
-    --belize-red: #CE1126;
-    --belize-blue: #0038A8;
-    --belize-white: #FFFFFF;
-    --volleyball-orange: #FF7F00;
-    --volleyball-blue: #0055A4;
-    --light-gray: #F5F5F5;
-    --dark: #333333;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
     font-family: 'Poppins', sans-serif;
     background-color: var(--belize-white);
     color: var(--dark);
     line-height: 1.6;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-header {
-    background: linear-gradient(135deg, var(--belize-blue), var(--volleyball-blue));
-    color: var(--belize-white);
-    padding: 2rem 0;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-bottom: 5px solid var(--belize-red);
 }
 
 .logo {
@@ -83,42 +52,6 @@ p.lead {
     gap: 20px;
     flex-wrap: wrap;
     margin-top: 2rem;
-}
-
-.btn {
-    display: inline-block;
-    padding: 12px 30px;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 0.9rem;
-    min-width: 180px;
-    text-align: center;
-}
-
-.btn-primary {
-    background-color: var(--belize-blue);
-    color: var(--belize-white);
-    border: 2px solid var(--belize-blue);
-}
-
-.btn-primary:hover {
-    background-color: transparent;
-    color: var(--belize-blue);
-}
-
-.btn-secondary {
-    background-color: var(--volleyball-orange);
-    color: var(--belize-white);
-    border: 2px solid var(--volleyball-orange);
-}
-
-.btn-secondary:hover {
-    background-color: transparent;
-    color: var(--volleyball-orange);
 }
 
 .volleyball-container {
@@ -176,14 +109,6 @@ p.lead {
 .panel-5 { transform: rotateY(240deg); }
 .panel-6 { transform: rotateY(300deg); }
 
-footer {
-    background: linear-gradient(135deg, var(--belize-blue), var(--volleyball-blue));
-    color: var(--belize-white);
-    text-align: center;
-    padding: 2rem 0;
-    border-top: 5px solid var(--belize-red);
-}
-
 .social-links {
     display: flex;
     justify-content: center;
@@ -207,19 +132,6 @@ footer {
 .social-links a:hover {
     transform: translateY(-3px);
     background-color: var(--volleyball-orange);
-}
-
-.color-strip {
-    height: 10px;
-    background: linear-gradient(90deg, 
-        var(--belize-red) 0%, 
-        var(--belize-red) 25%, 
-        var(--belize-blue) 25%, 
-        var(--belize-blue) 50%, 
-        var(--volleyball-orange) 50%, 
-        var(--volleyball-orange) 75%, 
-        var(--belize-white) 75%, 
-        var(--belize-white) 100%);
 }
 
 @media (max-width: 768px) {

@@ -5,6 +5,45 @@ body {
     line-height: 1.6;
 }
 
+/* Button Styles */
+.btn {
+    display: inline-block;
+    padding: 12px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    min-width: 180px;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.btn-primary {
+    background-color: var(--belize-blue);
+    color: var(--belize-white);
+    border-color: var(--belize-blue);
+}
+
+.btn-primary:hover {
+    background-color: transparent;
+    color: var(--belize-blue);
+}
+
+.btn-secondary {
+    background-color: var(--volleyball-orange);
+    color: var(--belize-white);
+    border-color: var(--volleyball-orange);
+}
+
+.btn-secondary:hover {
+    background-color: transparent;
+    color: var(--volleyball-orange);
+}
+
 .btn-danger {
     background-color: #dc3545;
     color: var(--belize-white);
@@ -16,15 +55,15 @@ body {
     color: #dc3545;
 }
 
-/* Tournament Page Styles */
-.tournament-page {
+/* Team Page Styles */
+.team-page {
     padding: 2rem 0;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
-.tournament-header {
+.team-header {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -65,8 +104,8 @@ body {
     gap: 1rem;
 }
 
-/* Tournament Card Section */
-.tournament-card-section {
+/* Team Card Section */
+.team-card-section {
     margin-bottom: 3rem;
 }
 
@@ -79,38 +118,25 @@ body {
     border-top: 4px solid var(--belize-red);
 }
 
-.tournament-details p {
+.team-details p {
     margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-.tournament-status {
+.team-rank {
     display: inline-block;
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-weight: 600;
     margin-top: 1rem;
-}
-
-.tournament-status.future {
-    background-color: #ffc107;
-    color: #856404;
-}
-
-.tournament-status.ongoing {
-    background-color: #28a745;
+    background-color: var(--volleyball-orange);
     color: white;
 }
 
-.tournament-status.completed {
-    background-color: #6c757d;
-    color: white;
-}
-
-/* Participants Section */
-.participants-section {
+/* Players Section */
+.players-section {
     margin-bottom: 3rem;
 }
 
@@ -135,121 +161,71 @@ body {
     font-size: 0.8rem;
 }
 
-.participants-grid {
+.players-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
 }
 
-.participant-card {
+.player-card {
     background-color: white;
     border-radius: 8px;
-    padding: 1rem;
+    padding: 1.5rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.participant-card:hover {
+.player-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.participant-avatar {
+.player-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.player-number {
+    background-color: var(--belize-blue);
+    color: white;
     width: 40px;
     height: 40px;
-    background-color: var(--light-gray);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--belize-blue);
+    font-weight: bold;
+    font-size: 1.1rem;
 }
 
-.participant-name {
-    font-weight: 500;
-}
-
-/* Rounds Section */
-.rounds-section {
-    margin-bottom: 3rem;
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.rounds-actions {
-    display: flex;
-    gap: 1rem;
-}
-
-.rounds-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.round-card {
-    position: relative;
-}
-
-.games-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin: 1.5rem 0;
-}
-
-.game-card {
-    background-color: white;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.game-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.teams {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.team-select {
-    flex: 1;
-    padding: 0.5rem;
-}
-
-.vs {
+.player-name {
     font-weight: 600;
-    color: var(--belize-blue);
+    font-size: 1.1rem;
 }
 
-.scores {
+.player-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.player-detail {
     display: flex;
-    align-items: center;
-    gap: 1rem;
+    flex-direction: column;
 }
 
-.scores input {
-    width: 60px;
-    text-align: center;
+.player-detail-label {
+    color: #777;
+    font-size: 0.8rem;
 }
 
-.game-time input {
-    width: 100%;
+.player-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
 }
 
 .empty-state {
@@ -339,10 +315,7 @@ label {
 }
 
 input[type="text"],
-input[type="date"],
 input[type="number"],
-input[type="tel"],
-textarea,
 select {
     width: 100%;
     padding: 0.75rem;
@@ -353,15 +326,27 @@ select {
 }
 
 input:focus,
-textarea:focus,
 select:focus {
     outline: none;
     border-color: var(--belize-blue);
 }
 
-textarea {
-    min-height: 120px;
-    resize: vertical;
+.height-inputs {
+    display: flex;
+    gap: 1rem;
+}
+
+.height-input {
+    flex: 1;
+    position: relative;
+}
+
+.height-input span {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
 }
 
 .form-actions {
@@ -370,86 +355,6 @@ textarea {
     gap: 1rem;
     padding: 1.5rem;
     border-top: 1px solid #eee;
-}
-
-/* Warning and Confirmation Styles */
-.warning-message,
-.confirmation-message {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1rem;
-    border-radius: 4px;
-}
-
-.warning-message {
-    background-color: #fff3cd;
-    color: #856404;
-}
-
-.warning-message i {
-    color: #ffc107;
-}
-
-.confirmation-message {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.confirmation-message i {
-    color: #28a745;
-}
-
-/* Teams Selection */
-.teams-selection {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 1rem;
-}
-
-.team-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-}
-
-.team-checkbox:hover {
-    background-color: #f8f9fa;
-}
-
-.team-checkbox input {
-    display: none;
-}
-
-.checkmark {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #ddd;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-}
-
-.team-checkbox input:checked + .checkmark {
-    background-color: var(--belize-blue);
-    border-color: var(--belize-blue);
-    color: white;
-}
-
-.team-checkbox input:checked + .checkmark::after {
-    content: "✓";
-    font-size: 0.8rem;
-}
-
-.team-name {
-    flex: 1;
 }
 
 /* Footer Styles */
@@ -493,8 +398,7 @@ footer {
         gap: 0;
     }
 
-    .action-buttons,
-    .rounds-actions {
+    .action-buttons {
         width: 100%;
     }
 
@@ -503,8 +407,8 @@ footer {
         text-align: center;
     }
 
-    .participants-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    .players-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     }
 
     .modal-content {
@@ -513,25 +417,11 @@ footer {
 }
 
 @media (max-width: 480px) {
-    .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
     .form-actions {
         flex-direction: column;
     }
 
     .form-actions .btn {
         width: 100%;
-    }
-
-    .teams {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .vs {
-        text-align: center;
     }
 }
