@@ -203,12 +203,14 @@ body {
 
 .games-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 1rem;
     margin: 1.5rem 0;
+    overflow-x: scroll;
 }
 
 .game-card {
+    min-width: 300px;
     background-color: white;
     padding: 1rem;
     border-radius: 8px;
@@ -238,18 +240,19 @@ body {
 }
 
 .scores {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr;
     align-items: center;
     gap: 1rem;
 }
 
-.scores input {
-    width: 60px;
+.scores input{
+    width: 100px !important;
     text-align: center;
 }
 
 .game-time input {
-    width: 100%;
+    width: 400%;
 }
 
 .empty-state {

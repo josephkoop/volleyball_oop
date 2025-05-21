@@ -112,7 +112,6 @@ export const editTeam = async (req: Request, res: Response): Promise<any> => {
 export const createPlayer = async(req: Request, res: Response): Promise<void> => {
     const { teamId } = req.params;
     const { name, number, position, heightFeet, heightInches, age } = req.body;
-    console.log("Height: ", heightFeet, heightInches);
     try {
         const team = await TeamClass.getTeamDB(parseInt(teamId, 10));
         if(team){
@@ -140,7 +139,6 @@ export const createPlayer = async(req: Request, res: Response): Promise<void> =>
 export const editPlayer = async(req: Request, res: Response): Promise<void> => {
     const { teamId } = req.params;
     const { id, name, number, position, heightFeet, heightInches, age, newTeamId } = req.body;          //Match newTeamId on front end
-    console.log("Height: ", heightFeet, heightInches);
     try {
         const team = await TeamClass.getTeamDB(parseInt(newTeamId, 10));
         if(team){

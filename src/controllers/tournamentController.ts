@@ -278,7 +278,6 @@ export const saveRound = async(req: Request, res: Response): Promise<any> => {
         return res.status(404).json({ error: 'Points cannot be negative.' });
     }
 
-    console.log(points1_1, points2_1);
     if(points1_1 || points2_1){
         if(points1_1 == null || points2_1 == null){
             return res.status(404).json({ error: 'Both teams must have points (set #1).' });
@@ -319,7 +318,6 @@ export const saveRound = async(req: Request, res: Response): Promise<any> => {
                 return res.status(404).json({ error: 'The point difference cannot be less than 2 (set #2).' });
             }
         }
-        console.log(points2_1, points1_1, points2_2, points1_2);
         if((points1_1 > points2_1 && points1_2 > points2_2) || (points2_1 > points1_1 && points2_2 > points1_2)){
             return res.status(404).json({ error: 'Games cannot go to three sets unless each team wins 1 set.' });
         }
@@ -335,15 +333,12 @@ export const saveRound = async(req: Request, res: Response): Promise<any> => {
         return res.status(404).json({ error: 'Something went wrong.' });
     }
 
-    //console.log(id, round_id, game_id);
-
 
     try {
         const tournament = await TournamentClass.getTournamentDB(parseInt(id, 10));
         if (!tournament) return res.status(404).json({ error: 'Tournament not found' });
 
         const updatedGame = await tournament.editGameDB(game_id, par1, par2);
-        //console.log(updatedGame);
 
         await tournament.deleteSetsDB(game_id);
         if(points1_1 != null){

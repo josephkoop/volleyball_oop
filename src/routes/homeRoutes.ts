@@ -26,8 +26,6 @@ router.get("/logout", isAuthenticated, logout); // protected
 router.get("/users", isAdmin, getUserManagement);
 router.post("/users/add", isAdmin, postAddAdmin);
 router.post("/users/delete", isAdmin, postDeleteUser);
-// router.get("/users/signup", isAdmin, getSignup);
-// router.post("/users/signup", isAdmin, postSignup);
 
 // Tournament routes
 router.get('/tournaments', viewTournaments);

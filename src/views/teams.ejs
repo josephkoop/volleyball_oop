@@ -45,23 +45,23 @@
 
             <% if (teams && teams.length > 0) { %>
                 <% teams.forEach(team => { %>
-                    <a href="/teams/<%= team.id %>/players" class="table-row" data-team-id="<%= team.id %>">
+                    <div data-href="/teams/<%= team.id %>/players" class="table-row" data-team-id="<%= team.id %>">
                         <div class="table-cell"><%= team.rank %></div>
                         <div class="table-cell"><%= team.name %></div>
                         <div class="table-cell"><%= team.location %></div>
                         <% if (user) { %>
                             <div class="table-cell actions">
-                                <button class="btn-icon btn-edit" data-team-id="<%= team.id %>" data-team-name="<%= team.name %>" data-team-rank="<%= team.rank %>" data-team-location="<%= team.location %>">
+                                <button class="btn-icon btn-edit btn-update" data-team-id="<%= team.id %>" data-team-name="<%= team.name %>" data-team-rank="<%= team.rank %>" data-team-location="<%= team.location %>">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn-icon btn-danger" data-team-id="<%= team.id %>" data-team-name="<%= team.name %>">
+                                <button class="btn-icon btn-danger btn-delete" data-team-id="<%= team.id %>" data-team-name="<%= team.name %>">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         <% }else{ %>
                             <div class="table-cell actions"></div>
                         <% } %>
-                    </a>
+                        </div>
                 <% }) %>
             <% } else { %>
                 <div class="empty-state">
@@ -176,8 +176,8 @@
         // DOM Elements
         const addTeamButton = document.getElementById('addTeamButton');
         const addFirstTeamButton = document.getElementById('addFirstTeamButton');
-        const editTeamButtons = document.querySelectorAll('.btn-edit');
-        const deleteTeamButtons = document.querySelectorAll('.btn-danger');
+        const editTeamButtons = document.querySelectorAll('.btn-update');
+        const deleteTeamButtons = document.querySelectorAll('.btn-delete');
         const modalCloseButtons = document.querySelectorAll('.modal-close');
         const cancelAddTeam = document.getElementById('cancelAddTeam');
         const cancelEditTeam = document.getElementById('cancelEditTeam');
@@ -186,6 +186,16 @@
         const editTeamForm = document.getElementById('editTeamForm');
         const deleteTeamForm = document.getElementById('deleteTeamForm');
         const modals = document.querySelectorAll('.modal');
+
+        document.querySelectorAll('.table-row').forEach(row => {
+            row.addEventListener('click', function(e) {
+                // Only navigate if the clicked element is NOT a button or inside one
+                if (!e.target.closest('button')) {
+                    const url = this.getAttribute('data-href');
+                    window.location.href = url;
+                }
+            });
+        });
 
         // Event Listeners
         if (addTeamButton) {

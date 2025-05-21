@@ -1,11 +1,13 @@
 <h2 class="round_card_name"><%= round.name %></h2>
 
 <div class="round_card" id="round_<%= index %>" data-round='<%- JSON.stringify(round) %>' data-tournament='<%- JSON.stringify(tournament) %>' data-participants='<%- JSON.stringify(participants) %>'>
-    <div class="gameOuter"></div>
+    <div class="games-container"></div>
 
     <div>
-        <% if (user) { %>
-            <button onclick="event.preventDefault(); event.stopPropagation(); deleteRound(event)" data-id="<%= round.id %>" id="deleteRoundButton" class="button">Delete Round</button>
+        <% if ((user) && tournament.status == "Ongoing") { %>
+            <button class="btn btn-danger" onclick="event.preventDefault(); event.stopPropagation(); deleteRound(event)" data-id="<%= round.id %>" id="deleteRoundButton">
+                <i class="fas fa-trash"></i> Delete Round
+            </button>
         <% } %>
     </div>
 </div>
@@ -21,8 +23,7 @@
 
         if(tournament.status == "Finished" || !user){
             round.games.forEach(game => {
-                console.log(round.games);
-                let gameInner = `<div class="game_division">`;
+                let gameInner = `<div class="game-card">`;
                     if(game.par1_id == game.winner_id){
                         gameInner += `<h3><strong>${game.par1.name}</strong> - ${game.par2.name}</h3>`;
                     }else if(game.par2.id == game.winner_id){
@@ -39,45 +40,52 @@
                         }
                     })
                 gameInner += `</div>`;
-                card.querySelector('.gameOuter').innerHTML += gameInner;
+                card.querySelector('.games-container').innerHTML += gameInner;
             });
         } else {
-            console.log(round.games);
             round.games.forEach(game => {
                 let gameInner = 
-                `<div class="game_division2">
+                `<div class="game-card">
                     <form id="roundForm_${game.id}" class="game-form" data-round_id=${round.id} data-game_id=${game.id}>
-                    <select name="par1">
-                        <option disabled selected value=0>Select</option>`;
-                        participants.forEach(par => {
-                            gameInner += `<option ${par.id == game.par1_id ? 'selected' : ''} value="${par.id}">${par.name}</option>`
-                        })
-                gameInner += 
-                    `</select>
-                    <select name="par2">
-                        <option disabled selected value=0>Select</option>`;
-                        participants.forEach(par => {
-                            gameInner += `<option ${par.id == game.par2_id ? 'selected' : ''} value="${par.id}">${par.name}</option>`
-                        })
-                gameInner += `</select>`;
+                        <div class="teams">
+                            <select name="par1" class="team-select">
+                                <option disabled selected value=0>Select</option>`;
+                                participants.forEach(par => {
+                                    console.log("A set: ", par.id, game.par1_id);
+                                    gameInner += `<option ${par.id == game.par1_id ? 'selected' : ''} value="${par.id}">${par.name}</option>`
+                                })
+                        gameInner += 
+                            `</select>
+                            <select name="par2" class="team-select">
+                                <option disabled selected value=0>Select</option>`;
+                                participants.forEach(par => {
+                                    gameInner += `<option ${par.id == game.par2_id ? 'selected' : ''} value="${par.id}">${par.name}</option>`
+                                })
+                gameInner += `</select>
+                            </div>
+                            <div class="scores">`;
                 let count = 1;
                 game.sets.forEach(set => {
-                    gameInner += `
-                    <input type="number" name="points1_${count}" value=${set.points1}>
-                    <input type="number" name="points2_${count}" value=${set.points2}>`;
+                    gameInner += `<div>
+                        <input type="number" name="points1_${count}" value=${set.points1}>
+                        <span>-</span>
+                        <input type="number" name="points2_${count}" value=${set.points2}>
+                    </div>`;
                     count++;
                 })
                 
                 for(count; count <= 3; count++){
-                    gameInner += `
-                    <input type="number" name="points1_${count}" value="">
-                    <input type="number" name="points2_${count}" value="">`;
+                    gameInner += `<div>
+                        <input type="number" name="points1_${count}" value="">
+                        <span>-</span>
+                        <input type="number" name="points2_${count}" value="">
+                    </div>`;
                 }
-                gameInner += `
-                <div><button type="submit" class="button">Save Game</button></div>
+                gameInner += `</div>
+                <div><button type="submit" class="btn btn-secondary"><i class="fas fa-save"></i> Save Game</button></div>
                 </form></div>`
 
-                card.querySelector('.gameOuter').innerHTML += gameInner;
+                card.querySelector('.games-container').innerHTML += gameInner;
             });
         }
 
@@ -100,8 +108,6 @@
                 const id = tournament.id;
                 const round_id = form.getAttribute('data-round_id');
                 const game_id = form.getAttribute('data-game_id');
-
-                console.log(id, parseInt(round_id, 10), parseInt(game_id, 10));
             
                 try {
                     const res = await fetch('/tournaments/rounds/save', {

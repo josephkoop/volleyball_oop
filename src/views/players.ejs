@@ -62,15 +62,15 @@
                             </div>
                             <div class="player-detail">
                                 <span class="player-detail-label">Height</span>
-                                <span><%= player.heightFeet %>'<%= player.heightInches %></span>
+                                <span><%= player.heightFeet %>'<%= player.heightInches %>"</span>
                             </div>
                         </div>
                         <% if(user){ %>
                             <div class="player-actions">
-                                <button class="btn-icon btn-primary" onclick="openEditModalP(event, '<%= player.id %>')">
+                                <button class="btn-icon btn-primary" onclick="openEditModalP('<%= player.id %>', '<%= player.name %>', '<%= player.number %>', '<%= player.position %>', '<%= player.heightFeet %>', '<%= player.heightInches %>', '<%= player.age %>')">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn-icon btn-danger" onclick="openDeleteModalP(event, '<%= player.id %>')">
+                                <button class="btn-icon btn-danger" onclick="openDeleteModalP('<%= player.id %>', '<%= player.name %>')">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -85,7 +85,7 @@
                 <p>This team currently has no players. <% if(user){ %>Add one to get started!<% } %></p>
                 <% if(user){ %>
                     <button id="addPlayerButtonEmpty" class="btn btn-primary" onclick="event.preventDefault(); event.stopPropagation(); openAddModalP(event)">
-                        <i class="fas fa-plus"></i> Add Player
+                        Add Player
                     </button>
                 <% } %>
             </div>
@@ -100,7 +100,7 @@
             <h3>Add New Player</h3>
             <button class="modal-close" onclick="closeModalP()">&times;</button>
         </div>
-        <form id="addPlayerForm" action="/teams/<%= team.id %>/players/add" method="POST">
+        <form id="addPlayerForm">
             <input type="hidden" name="team_id" value="<%= team.id %>">
 
             <div class="form-group">
@@ -159,8 +159,7 @@
             <h3>Edit Player</h3>
             <button class="modal-close" onclick="closeModalP()">&times;</button>
         </div>
-        <form id="editPlayerForm" action="/teams/<%= team.id %>/players/edit" method="POST">
-            <input type="hidden" name="_method" value="PUT">
+        <form id="editPlayerForm">
             <input type="hidden" name="id" id="editPlayerId"/>
 
             <div class="form-group">
@@ -232,13 +231,13 @@
             <h3>Confirm Deletion</h3>
             <button class="modal-close" onclick="closeModalP()">&times;</button>
         </div>
-        <form id="deletePlayerForm" action="/teams/<%= team.id %>/players/delete" method="POST">
+        <form id="deletePlayerForm">
             <input type="hidden" name="id" id="deletePlayerId"/>
             
             <div class="modal-body">
                 <div class="warning-message">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <p>Are you sure you want to delete this player? This action cannot be undone.</p>
+                    <p id="deleteConfirmationText">Are you sure you want to delete this player? This action cannot be undone.</p>
                 </div>
             </div>
 
@@ -252,17 +251,21 @@
 
 
 <script>
+    let team = <%- JSON.stringify(team) %>;
+
     function openAddModalP() {
         document.getElementById("addPlayerModal").classList.add("show");
     }
 
-    function openDeleteModalP(element, playerId, name) {
+    function openDeleteModalP(playerId, name) {
         document.getElementById("deletePlayerId").value = playerId;
         document.getElementById("deleteConfirmationText").textContent = `Are you sure you want to delete ${name}? This action cannot be undone.`;
+        
         document.getElementById("deletePlayerModal").classList.add("show");
     }
 
     function openEditModalP(playerId, name, number, position, heightFeet, heightInches, age) {
+        console.log(playerId, heightFeet, heightInches);
         document.getElementById("editPlayerId").value = playerId;
         document.getElementById("editPlayerName").value = name;
         document.getElementById("editPlayerNumber").value = number;
@@ -281,6 +284,10 @@
     }
 
     document.addEventListener("click", function(event) {
+        if (event.target.tagName === "BUTTON" || event.target.closest("button")) {
+            return;
+        }
+
         let modals = ['addPlayerModal', 'editPlayerModal', 'deletePlayerModal'];
         modals.forEach(modalId => {
             let modal = document.getElementById(modalId);
@@ -327,6 +334,82 @@
             e.preventDefault();
             alert('Height must be between 4 and 7 feet');
             return false;
+        }
+    });
+
+
+    addPlayerForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch(`/teams/${team.id}/players/add`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                const error = await response.json();
+                alert(error.message || 'Failed to add player');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while adding the player');
+        }
+    });
+
+    editPlayerForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch(`/teams/${team.id}/players/edit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                const error = await response.json();
+                alert(error.message || 'Failed to update player');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while updating the player');
+        }
+    });
+
+    deletePlayerForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch(`/teams/${team.id}/players/delete`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                const error = await response.json();
+                alert(error.message || 'Failed to delete player');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the player');
         }
     });
 </script>

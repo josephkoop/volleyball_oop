@@ -74,31 +74,35 @@ export const postAddAdmin = async (req: Request, res: Response) => {
     try {
         const existingUser = await UserClass.findByUsername(username);
         if (existingUser) {
-            return res.redirect("/users?error=Username already exists");
+            res.status(500).json({ error: 'Username already exists' });
         }
 
         await UserClass.create(username, password, 'official');
         res.redirect("/users");
     } catch (error) {
         console.error(error);
-        res.redirect("/users?error=Failed to add official");
+        res.status(500).json({ error: 'Failed to add official.' });
     }
 };
 
 export const postDeleteUser = async (req: Request, res: Response) => {
-    const { userId } = req.body;
+    const { id } = req.body;
+    console.log("ID:", id);
 
-    if(!req.session.user){ return res.redirect("/users?error=Failed to delete user"); }
-    try {
-        const currentUser = await UserClass.findByUsername(req.session.user.username);
-        if (!currentUser?.canDeleteUsers()) {
-            return res.redirect("/users?error=You cannot delete users");
+    if(req.session.user){ 
+        try {
+            const currentUser = await UserClass.findByUsername(req.session.user.username);
+            if (!currentUser?.canDeleteUsers()) {
+                res.status(500).json({ error: 'You cannot delete users.' });
+            }
+
+            await UserClass.deleteById(Number(id));
+            res.redirect("/users");
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Failed to delete user.' });
         }
-
-        await UserClass.deleteById(Number(userId));
-        res.redirect("/users");
-    } catch (error) {
-        console.error(error);
-        res.redirect("/users?error=Failed to delete user");
+    }else{
+        res.status(500).json({ error: 'Failed to delete user.' });
     }
 };

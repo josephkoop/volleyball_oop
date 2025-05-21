@@ -153,3 +153,11 @@ p.lead {
         height: 120px;
     }
 }
+
+.modal-content form{
+    padding: 20px;
+}
+
+.table-row:hover{
+    cursor: pointer;
+}

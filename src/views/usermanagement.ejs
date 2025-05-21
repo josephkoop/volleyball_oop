@@ -35,7 +35,7 @@
             <i class="fas fa-user-plus"></i> Add New Official
         </h2>
         
-        <form class="add-user-form" action="/users/add" method="post">
+        <form id="addUserForm" class="add-user-form">
             <div class="form-row">
                 <div class="form-group">
                     <label for="username">Username</label>
@@ -101,7 +101,7 @@
                                 <span class="user-name"><%= user.username %></span>
                                 <span class="user-role"><%= user.role %></span>
                             </div>
-                            <button class="btn btn-danger btn-sm" 
+                            <button class="btn btn-danger btn-sm btn-delete" 
                                     onclick="openDeleteModal('<%= user.username %>', '<%= user.id %>')">
                                 <i class="fas fa-trash"></i> Delete
                             </button>
@@ -120,7 +120,7 @@
             <h3>Delete User</h3>
             <button class="modal-close" onclick="closeModal()">&times;</button>
         </div>
-        <form id="deleteUserForm" method="POST" action="/users/delete">
+        <form id="deleteUserForm">
             <input type="hidden" name="userId" id="deleteUserId">
             
             <div class="modal-body">
@@ -139,11 +139,16 @@
 </div>
 
 <script>
+    const addUserForm = document.getElementById('addUserForm');
+    const deleteUserForm = document.getElementById('deleteUserForm');
+
     // Open delete confirmation modal
     function openDeleteModal(username, userId) {
         const modal = document.getElementById('deleteUserModal');
         document.getElementById('userToDelete').textContent = username;
         document.getElementById('deleteUserId').value = userId;
+        console.log("user_id: ", userId);
+        
         modal.classList.add('show');
         
         // Close modal when clicking outside
@@ -161,29 +166,6 @@
 
     // Form validation for add user
     document.addEventListener('DOMContentLoaded', function() {
-        const addUserForm = document.querySelector('.add-user-form');
-        
-        if (addUserForm) {
-            addUserForm.addEventListener('submit', function(e) {
-                const username = document.getElementById('username').value.trim();
-                const password = document.getElementById('password').value.trim();
-                
-                if (username.length < 3) {
-                    alert('Username must be at least 3 characters long');
-                    e.preventDefault();
-                    return false;
-                }
-                
-                if (password.length < 6) {
-                    alert('Password must be at least 6 characters long');
-                    e.preventDefault();
-                    return false;
-                }
-                
-                return true;
-            });
-        }
-
         // Close modal with Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
@@ -192,20 +174,71 @@
         });
     });
 
-    // Initialize delete buttons
-    document.addEventListener('DOMContentLoaded', function() {
-        const deleteButtons = document.querySelectorAll('.btn-danger');
+    addUserForm.addEventListener('submit', async function (e) {
+
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
         
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                if (!this.hasAttribute('data-confirmed')) {
-                    e.preventDefault();
-                    const username = this.getAttribute('data-username');
-                    const userId = this.getAttribute('data-userid');
-                    openDeleteModal(username, userId);
-                }
+        if (username.length < 3) {
+            alert('Username must be at least 3 characters long');
+            e.preventDefault();
+            return false;
+        }
+        
+        if (password.length < 6) {
+            alert('Password must be at least 6 characters long');
+            e.preventDefault();
+            return false;
+        }
+
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch(`/users/add`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
             });
-        });
+
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                const error = await response.json();
+                alert(error.message || 'Failed to add user');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while adding the user');
+        }
+    });
+
+    deleteUserForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const id = document.getElementById('deleteUserId').value;
+        console.log(id);
+        if(!id){ return; }
+
+        try {
+            const response = await fetch(`/users/delete`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                const error = await response.json();
+                alert(error.message || 'Failed to delete user');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the user');
+        }
     });
 </script>
 

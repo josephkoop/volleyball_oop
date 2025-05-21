@@ -79,7 +79,7 @@
                 <span class="badge"><%= tournament.rounds ? tournament.rounds.length : 0 %></span>
             </h2>
             
-            <% if (user) { %>
+            <% if ((user) && tournament.status == 'Ongoing') { %>
                 <div class="rounds-actions">
                     <button onclick="openAddRoundModal(event)" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Add Round
@@ -95,43 +95,7 @@
             <% if (tournament.rounds && tournament.rounds.length > 0) { %>
                 <% tournament.rounds.forEach((round, index) => { %>
                     <div class="round-card welcome-section">
-                        <h3><%= round.name %></h3>
-                        <div class="games-container">
-                            <% round.games.forEach((game, gameIndex) => { %>
-                                <div class="game-card">
-                                    <form class="game-form">
-                                        <input type="hidden" name="round_id" value="<%= round._id %>">
-                                        <input type="hidden" name="game_id" value="<%= game._id %>">
-                                        <div class="teams">
-                                            <select name="team1" class="team-select">
-                                                <% participants.forEach(team => { %>
-                                                    <option value="<%= team._id %>" <%= game.team1 == team._id ? 'selected' : '' %>><%= team.name %></option>
-                                                <% }) %>
-                                            </select>
-                                            <span class="vs">vs</span>
-                                            <select name="team2" class="team-select">
-                                                <% participants.forEach(team => { %>
-                                                    <option value="<%= team._id %>" <%= game.team2 == team._id ? 'selected' : '' %>><%= team.name %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-                                        <div class="scores">
-                                            <input type="number" name="score1" value="<%= game.score1 || 0 %>" min="0">
-                                            <span>-</span>
-                                            <input type="number" name="score2" value="<%= game.score2 || 0 %>" min="0">
-                                        </div>
-                                        <div class="game-time">
-                                            <input type="datetime-local" name="game_time" value="<%= game.game_time ? new Date(game.game_time).toISOString().slice(0,16) : '' %>">
-                                        </div>
-                                    </form>
-                                </div>
-                            <% }) %>
-                        </div>
-                        <% if (user) { %>
-                            <button class="btn btn-danger" onclick="deleteRound(event)" data-id="<%= round._id %>">
-                                <i class="fas fa-trash"></i> Delete Round
-                            </button>
-                        <% } %>
+                        <%- include('components/round-card', { round: round, tournament: tournament, participants: participants, index: index}) %>
                     </div>
                 <% }) %>
             <% } else { %>
@@ -139,7 +103,7 @@
                     <i class="fas fa-volleyball-ball"></i>
                     <h3>No Rounds Yet</h3>
                     <p>This tournament doesn't have any rounds scheduled yet.</p>
-                    <% if (user) { %>
+                    <% if ((user) && tournament.status == 'Ongoing') { %>
                         <button onclick="openAddRoundModal(event)" class="btn btn-primary">
                             Add Round
                         </button>
@@ -317,7 +281,7 @@
 
 
 <script>
-    tournament = <%- JSON.stringify(tournament) %>;
+    let tournament = <%- JSON.stringify(tournament) %>;
 
 
     function openDeleteModal(){
@@ -374,35 +338,23 @@
     }
 
 
-    document.addEventListener("click", function(event){
-        let editModal = document.getElementById("editTournamentModal");
-        let editModalContent = document.querySelector("#editTournamentModal .modal-content");
-        if(editModal.classList.contains("show") && !editModalContent.contains(event.target)){
-            closeModal();
+
+    document.addEventListener("click", function(event) {
+        if (event.target.tagName === "BUTTON" || event.target.closest("button")) {
+            return;
         }
 
-        let deleteModal = document.getElementById("deleteTournamentModal");
-        let deleteModalContent = document.querySelector("#deleteTournamentModal .modal-content");
-        if(deleteModal.classList.contains("show") && !deleteModalContent.contains(event.target)){
-            closeModal();
-        }   
-        let startModal = document.getElementById("startTournamentModal");
-        let startModalContent = document.querySelector("#startTournamentModal .modal-content");
-        if(startModal.classList.contains("show") && !startModalContent.contains(event.target)){
-            closeModal();
-        }
-
-        let addRoundModal = document.getElementById("addRoundModal");
-        let addRoundContent = document.querySelector("#addRoundModal .modal-content");
-        if(addRoundModal.classList.contains("show") && !addRoundContent.contains(event.target)){
-            closeModal();
-        }   
-
-        let finishModal = document.getElementById("finishTournamentModal");
-        let finishModalContent = document.querySelector("#finishTournamentModal .modal-content");
-        if(finishModal.classList.contains("show") && !finishModalContent.contains(event.target)){
-            closeModal();
-        }  
+        let modals = ['editTournamentModal', 'deleteTournamentModal', 'startTournamentModal', 'addRoundModal', 'finishTournamentModal'];
+        modals.forEach(modalId => {
+            let modal = document.getElementById(modalId);
+            let modalContent = document.querySelector(`#${modalId} .modal-content`);
+            if (modal.classList.contains("show") && 
+                !modalContent.contains(event.target) && 
+                !event.target.classList.contains('modal-close') && 
+                !event.target.closest('.modal-close')) {
+                closeModalP();
+            }
+        });
     });
 </script>
 
@@ -536,7 +488,6 @@
     
         const id = tournament.id;
         const round_id = event.currentTarget.getAttribute('data-id');
-        console.log(event.currentTarget);
     
         try {
             const res = await fetch('/tournaments/rounds/delete', {
